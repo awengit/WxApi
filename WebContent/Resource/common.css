@@ -1,0 +1,105 @@
+﻿.w980
+{
+    width: 980px;
+    height: auto;
+    margin: 0px auto;
+}
+
+.login-panel
+{
+    width: 600px;
+    margin: 0px auto;
+    padding-top: 200px;
+}
+
+.login-panel .layui-form
+{
+    width: 350px;
+    margin: 0px auto;
+    padding: 20px 0px 10px 0px;
+}
+
+.layui-layout-admin
+{
+    position: relative;
+    overflow: hidden;
+}
+
+.layui-layout-admin .layui-top
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 70px;
+    width: 100%;
+}
+
+.layui-layout-admin .layui-top p
+{
+    line-height: 70px;
+    padding-left: 20px;
+}
+
+.layui-layout-admin .layui-left
+{
+    position: absolute;
+    top: 70px;
+    left: 0px;
+    width: 200px;
+    overflow-x: hidden;
+}
+
+.layui-layout-admin .layui-main
+{
+    position: absolute;
+    top: 70px;
+    left: 200px;
+    height: 100%;
+    width: 200px;
+    margin: 0px;
+}
+
+.layui-layout-admin .layui-main .layui-tab
+{
+    margin: 0px;
+}
+
+.layui-layout-admin .layui-main .layui-tab .layui-tab-title
+{
+    position: absolute;
+    top: 0px;
+    left: 1px;
+    width: 100%;
+}
+
+.layui-layout-admin .layui-main .layui-tab .layui-tab-content
+{
+    position: absolute;
+    top: 41px;
+    left: 0px;
+    width: 100%;
+    padding: 0px;
+}
+
+.layui-layout-admin .layui-main .layui-tab .layui-tab-content .layui-tab-item
+{
+    width: 100%;
+    height: 100%;
+}
+
+.ifMain
+{
+    height: 100%;
+    width: 100%;
+    border: 0px;
+}
+
+.inner-page
+{
+    padding: 10px;
+}
+
+.layui-table
+{
+    margin: 0px;
+}
