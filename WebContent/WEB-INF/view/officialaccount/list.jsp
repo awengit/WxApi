@@ -66,7 +66,7 @@
 		<form id="mainform" class="layui-form layui-form-pane" action="" method="post">
 			<div class="layui-form-item">
 				<a class="layui-btn layui-btn-primary"
-					onclick="OpenWindowIframe('<%=request.getContextPath()%>/officialaccount/add.html','500px','330px')">添加</a>
+					onclick="OpenWindowIframe('<%=request.getContextPath()%>/officialaccount/modify.html','500px','330px')">添加</a>
 			</div>
 			<table class="layui-table">
 				<colgroup>
@@ -94,12 +94,8 @@
 						<td>gh_ea6695e339cf</td>
 						<td></td>
 						<td></td>
-						<td style="text-align: center;"><a title="刷新用户" onclick="FlushUser('gh_ea6695e339cf')"
-							class="layui-btn layui-btn-primary layui-btn-small">刷新用户</a> <a title="刷新分组"
-							onclick="FlushGroup('gh_ea6695e339cf')" class="layui-btn layui-btn-primary layui-btn-small">刷新分组</a>
-							<a title="刷新模板" onclick="FlushTemplate('gh_ea6695e339cf')"
-							class="layui-btn layui-btn-primary layui-btn-small">刷新模板</a> <a title="编辑"
-							onclick="OpenWindowIframe('/OfficialAccount/Edit.html?account_num=gh_ea6695e339cf','600px','350px')"
+						<td style="text-align: center;"><a title="编辑"
+							onclick="OpenWindowIframe('/OfficialAccount/modify.html?id=1','600px','350px')"
 							class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a title="删除"
 							onclick="Delete('gh_ea6695e339cf')" class="layui-btn layui-btn-primary layui-btn-small">删除</a>
 						</td>

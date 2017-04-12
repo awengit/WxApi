@@ -1,6 +1,7 @@
 package wxapi.Controller;
 
 import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -18,12 +19,12 @@ public class OfficialAccount {
 		return mv;
 	}
 
-	@RequestMapping(value = "add", method = RequestMethod.GET)
+	@RequestMapping(value = "modify", method = RequestMethod.GET)
 	public String add() {
-		return "officialaccount/add";
+		return "officialaccount/modify";
 	}
 
-	@RequestMapping(value = "add", method = RequestMethod.POST)
+	@RequestMapping(value = "modify", method = RequestMethod.POST)
 	public void add(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		response.setContentType("application/json;charset=utf-8");

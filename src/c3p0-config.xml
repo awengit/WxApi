@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<c3p0-config>
+	<default-config>
+		<property name="driverClass">oracle.jdbc.driver.OracleDriver</property>
+		<property name="jdbcUrl">jdbc:oracle:thin:@127.0.0.1:1521:wxdb
+		</property>
+		<property name="user">wxdb</property>
+		<property name="password">lww421324</property>
+		<property name="acquireIncrement">2</property>
+		<property name="initialPoolSize">4</property>
+		<property name="minPoolSize">2</property>
+		<property name="maxPoolSize">10</property>
+	</default-config>
+</c3p0-config>
