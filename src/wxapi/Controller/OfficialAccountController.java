@@ -19,7 +19,7 @@ public class OfficialAccountController {
 
 	@RequestMapping(value = "list")
 	public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
-		List<OfficialAccount> array = accountService.Select();
+		List<OfficialAccount> array = accountService.select();
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("account", array);
 		mv.setViewName("officialaccount/list");
@@ -30,7 +30,7 @@ public class OfficialAccountController {
 	public ModelAndView modify(String accountnum) {
 		OfficialAccount account = null;
 		if (accountnum != null && !accountnum.isEmpty()) {
-			account = accountService.SelectByAccountNum(accountnum);
+			account = accountService.selectByAccountNum(accountnum);
 		}
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("officialaccount/modify");
@@ -43,7 +43,7 @@ public class OfficialAccountController {
 		response.setContentType("application/json; charset=utf-8");
 		Result result = entity.validate();
 		if (result.getIssuccess()) {
-			int affect = accountService.InsertOrUpdate(entity);
+			int affect = accountService.insertOrUpdate(entity);
 			if (affect > 0) {
 				result.setMsg(String.valueOf(affect));
 			} else {
@@ -66,7 +66,7 @@ public class OfficialAccountController {
 			response.getWriter().print(result.toJson());
 			return;
 		}
-		int affect = accountService.Remove(accountnum);
+		int affect = accountService.remove(accountnum);
 		if (affect > 0) {
 			result.setIssuccess(true);
 			result.setCode(ResultCode.Success.ordinal());

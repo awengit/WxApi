@@ -1,8 +1,14 @@
 package wxapi.WxHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import wxapi.Entity.Wx.AccessToken;
+import wxapi.Entity.Wx.WxResult;
+
+import com.google.gson.Gson;
 
 import avin.web.HttpRequest;
 
@@ -16,58 +22,23 @@ public class WxHelperBase {
 	}
 
 	public WxHelperBase(String accountnum, String appid, String secret) {
-
+		getAccessToken(accountnum, appid, secret);
 	}
 
-	/**
-	 * 发送Get请求
-	 * 
-	 * @param url
-	 *            url
-	 * @param accountnum
-	 *            微信公众号
-	 * @param module
-	 *            模块
-	 * @param operation
-	 *            操作
-	 * @return
-	 */
-	protected String sendGet(String url, String accountnum, String module, String operation) {
-		String result = "";
-		result = HttpRequest.sendGet(url);
+	protected static String createGet(String url, String accountnum, String module, String operation) {
+		String result = HttpRequest.createGet(url);
+		// System.out.println(url);
+		// System.out.println(result);
 		return result;
 	}
 
-	/**
-	 * 发送Post请求
-	 * 
-	 * @param url
-	 *            url
-	 * @param body
-	 *            请求数据
-	 * @param accountnum
-	 *            微信公众号
-	 * @param module
-	 *            模块
-	 * @param operation
-	 *            操作
-	 * @return
-	 */
-	protected String sendPost(String url, String body, String accountnum, String module, String operation) {
+	protected static String createPost(String url, String body, String accountnum, String module, String operation) {
 		String result = "";
-		result = HttpRequest.sendPost(url, body);
+		result = HttpRequest.createPost(url, body);
 		return result;
 	}
 
-	/**
-	 * 获取AccessToken
-	 * 
-	 * @param accountnum
-	 * @param appid
-	 * @param secret
-	 * @return
-	 */
-	public Object GetAccessToken(String accountnum, String appid, String secret) {
+	public static Object getAccessToken(String accountnum, String appid, String secret) {
 		AccessToken token;
 		for (int i = 0; i < arrayToken.size(); i++) {
 			if (arrayToken.get(i).accountnum.equals(accountnum)) {
@@ -81,20 +52,50 @@ public class WxHelperBase {
 				}
 			}
 		}
-		String strUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}";
+		String strUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 		strUrl = String.format(strUrl, appid, secret);
-		String strResult = sendGet(strUrl, accountnum, "GetAccessToken", "");
-
+		String strResult = createGet(strUrl, accountnum, "GetAccessToken", "");
+		Object obj = initResult(strResult, AccessToken.class);
+		if (obj instanceof AccessToken) {
+			if (obj != null) {
+				token = (AccessToken) obj;
+				token.accountnum = accountnum;
+				token.appid = appid;
+				token.secret = secret;
+				Date dateNow = new Date();
+				token.get_time = dateNow.getTime();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateNow);
+				cal.set(Calendar.SECOND, token.expires_in - 10);
+				token.expire_time = cal.getTime().getTime();
+				addToken(token);
+			}
+			return obj;
+		}
 		return null;
 	}
 
-	private void addToken(AccessToken token) {
+	protected static Object initResult(String result, Class<?> clazz) {
+		if (result == null || result.isEmpty()) {
+			return null;
+		}
+		Gson gson = new Gson();
+		if (result.startsWith("{\"errcode\":")) {
+			WxResult wxResult = gson.fromJson(result, WxResult.class);
+			return wxResult;
+		} else {
+			Object obj = gson.fromJson(result, clazz);
+			return obj;
+		}
+	}
+
+	private static void addToken(AccessToken token) {
 		synchronized (tokenLock) {
 			arrayToken.add(token);
 		}
 	}
 
-	private void removeToken(String accountnum) {
+	private static void removeToken(String accountnum) {
 		synchronized (tokenLock) {
 			for (int i = 0; i < arrayToken.size(); i++) {
 				if (arrayToken.get(i).accountnum.equals(accountnum)) {

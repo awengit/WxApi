@@ -1,4 +1,4 @@
-package wxapi.WxHelper;
+package wxapi.Entity.Wx;
 
 public class AccessToken {
 	public String accountnum;
@@ -7,7 +7,7 @@ public class AccessToken {
 
 	public String secret;
 
-	public String accesstoken;
+	public String access_token;
 
 	public int expires_in;
 
