@@ -5,8 +5,8 @@
 <title></title>
 <%@include file="/WEB-INF/view/script.jsp"%>
 <script type="text/javascript">
-	PostDataToServ('postData', 'POST', '/OfficialAccount/AddEx.html',
-			'/OfficialAccount/List.html', null, function(data) {
+	PostDataToServ('postData', 'POST', '<%=request.getContextPath()%>/officialaccount/modify.html', '',
+			null, function(data) {
 				var index = parent.layer.getFrameIndex(window.name);
 				parent.layer.close(index);
 				parent.Reflush();
@@ -20,29 +20,29 @@
 				<div class="layui-form-item">
 					<label class="layui-form-label">公众号名称</label>
 					<div class="layui-input-block">
-						<input name="AccountName" lay-verify="required" placeholder="公众号名称" autocomplete="off"
-							class="layui-input" type="text" maxlength="20">
+						<input name="accountname" lay-verify="required" placeholder="公众号名称" autocomplete="off"
+							class="layui-input" type="text" maxlength="20" value="${model.accountname}">
 					</div>
 				</div>
 				<div class="layui-form-item">
 					<label class="layui-form-label">公众号账号</label>
 					<div class="layui-input-block">
-						<input name="AccountNum" lay-verify="required" placeholder="公众号账号" autocomplete="off"
-							class="layui-input" type="text" maxlength="80">
+						<input name="accountnum" lay-verify="required" placeholder="公众号账号" autocomplete="off"
+							class="layui-input" type="text" maxlength="80" value="${model.accountnum}">
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<label class="layui-form-label">AppId</label>
+					<label class="layui-form-label">appid</label>
 					<div class="layui-input-block">
-						<input name="AppID" lay-verify="required" placeholder="AppId" autocomplete="off"
-							class="layui-input" type="password" maxlength="80">
+						<input name="appid" lay-verify="required" placeholder="AppId" autocomplete="off"
+							class="layui-input" type="password" maxlength="80" value="${model.appid}">
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<label class="layui-form-label">Appsecret</label>
+					<label class="layui-form-label">secret</label>
 					<div class="layui-input-block">
-						<input name="Appsecret" lay-verify="required" placeholder="Appsecret" autocomplete="off"
-							class="layui-input" type="password" maxlength="80">
+						<input name="secret" lay-verify="required" placeholder="secret" autocomplete="off"
+							class="layui-input" type="password" maxlength="80" value="${model.secret}">
 					</div>
 				</div>
 				<div class="layui-form-item">

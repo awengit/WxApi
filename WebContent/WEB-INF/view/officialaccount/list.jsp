@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="wxapi.Entity.OfficialAccount"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,8 +9,7 @@
 <%@include file="/WEB-INF/view/script.jsp"%>
 <script type="text/javascript">
 	function Reflush() {
-		var form = document.getElementById('mainform');
-		form.submit();
+		window.location.reload(true);
 	}
 	function FlushUser(accountnum) {
 		AjaxToServ({
@@ -39,18 +41,18 @@
 			});
 		}, null);
 	}
-	function Delete(id) {
+	function Delete(accountnum) {
 		layui.use('layer', function() {
 			layer.open({
 				title : '删除',
 				content : '确定删除？',
-				btn : [ 'yes', 'no' ],
+				btn : ['yes', 'no'],
 				yes : function(index, layero) {
 					layer.close(index);
 					AjaxToServ({
-						id : id
-					}, 'POST', '/officialaccount/delete.html',
-							'/officialaccount/list.html', null, null, null);
+						accountnum : accountnum
+					}, 'POST', '<%=request.getContextPath()%>/officialaccount/delete.html',
+							'<%=request.getContextPath()%>/officialaccount/list.html', null, null, null);
 				},
 				no : function(index, layero) {
 				},
@@ -65,12 +67,10 @@
 	<div class="inner-page">
 		<form id="mainform" class="layui-form layui-form-pane" action="" method="post">
 			<div class="layui-form-item">
-				<a class="layui-btn layui-btn-primary"
-					onclick="OpenWindowIframe('<%=request.getContextPath()%>/officialaccount/modify.html','500px','330px')">添加</a>
+				<a class="layui-btn layui-btn-primary" onclick="OpenWindowIframe('<%=request.getContextPath()%>/officialaccount/modify.html','500px','350px')">添加</a>
 			</div>
 			<table class="layui-table">
 				<colgroup>
-					<col width="80">
 					<col>
 					<col width="200">
 					<col width="250">
@@ -79,7 +79,6 @@
 				</colgroup>
 				<thead>
 					<tr>
-						<th>Id</th>
 						<th>公众号名称</th>
 						<th>公众号</th>
 						<th>AppID</th>
@@ -88,34 +87,16 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>1</td>
-						<td>测试账号</td>
-						<td>gh_ea6695e339cf</td>
-						<td></td>
-						<td></td>
-						<td style="text-align: center;"><a title="编辑"
-							onclick="OpenWindowIframe('/OfficialAccount/modify.html?id=1','600px','350px')"
-							class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a title="删除"
-							onclick="Delete('gh_ea6695e339cf')" class="layui-btn layui-btn-primary layui-btn-small">删除</a>
-						</td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>李锐-测试账号</td>
-						<td>gh_70ea95172802</td>
-						<td></td>
-						<td></td>
-						<td style="text-align: center;"><a title="刷新用户" onclick="FlushUser('gh_70ea95172802')"
-							class="layui-btn layui-btn-primary layui-btn-small">刷新用户</a> <a title="刷新分组"
-							onclick="FlushGroup('gh_70ea95172802')" class="layui-btn layui-btn-primary layui-btn-small">刷新分组</a>
-							<a title="刷新模板" onclick="FlushTemplate('gh_70ea95172802')"
-							class="layui-btn layui-btn-primary layui-btn-small">刷新模板</a> <a title="编辑"
-							onclick="OpenWindowIframe('/OfficialAccount/Edit.html?account_num=gh_70ea95172802','600px','350px')"
-							class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a title="删除"
-							onclick="Delete('gh_70ea95172802')" class="layui-btn layui-btn-primary layui-btn-small">删除</a>
-						</td>
-					</tr>
+					<c:forEach var="a" items="${account}">
+						<tr>
+							<td>${a.accountname}</td>
+							<td>${a.accountnum}</td>
+							<td>${a.appid}</td>
+							<td>${a.secret}</td>
+							<td style="text-align: center;"><a title="编辑" onclick="OpenWindowIframe('<%=request.getContextPath()%>/officialaccount/modify.html?accountnum=${a.accountnum}','600px','350px')"
+								class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a title="删除" onclick="Delete('${a.accountnum}')" class="layui-btn layui-btn-primary layui-btn-small">删除</a></td>
+						</tr>
+					</c:forEach>
 				</tbody>
 			</table>
 		</form>

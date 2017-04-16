@@ -5,9 +5,7 @@ import wxapi.Entity.Base.IValidate;
 import wxapi.Entity.View.Result;
 import wxapi.Entity.View.ResultCode;
 
-public class OfficialacCount extends BeanBase implements IValidate {
-
-	private int id;
+public class OfficialAccount extends BeanBase implements IValidate {
 
 	private String accountname;
 
@@ -18,14 +16,6 @@ public class OfficialacCount extends BeanBase implements IValidate {
 	private String secret;
 
 	private boolean isdeleted;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public String getAccountname() {
 		return accountname;
@@ -70,24 +60,24 @@ public class OfficialacCount extends BeanBase implements IValidate {
 	public boolean isUpdate;
 
 	@Override
-	public Result Validate() {
+	public Result validate() {
 		Result result = new Result();
 		result.setIssuccess(false);
 		result.setCode(ResultCode.ParamError.ordinal());
-		if (!ValidateStringRang(accountname, false, -1, 20)) {
-			result.setMsg("公众号名称不能为空");
+		if (!validateStringRang(accountname, false, 0, 20)) {
+			result.setMsg("公众号名称不能为空，并且长度不大于20");
 			return result;
 		}
-		if (!ValidateStringRang(accountnum, false, 10, 100)) {
-			result.setMsg("公众号账号不能为空");
+		if (!validateStringRang(accountnum, false, 10, 100)) {
+			result.setMsg("公众号账号不能为空，并且长度在10到100之间");
 			return result;
 		}
-		if (!ValidateStringRang(appid, false, 10, 100)) {
-			result.setMsg("appid不能为空");
+		if (!validateStringRang(appid, false, 10, 100)) {
+			result.setMsg("appid不能为空，并且长度在10到100之间");
 			return result;
 		}
-		if (!ValidateStringRang(secret, false, 10, 100)) {
-			result.setMsg("secret不能为空");
+		if (!validateStringRang(secret, false, 10, 100)) {
+			result.setMsg("secret不能为空，并且长度在10到100之间");
 			return result;
 		}
 		result.setIssuccess(true);

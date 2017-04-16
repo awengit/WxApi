@@ -1,5 +1,6 @@
-package wxapi.DataContext;
+package wxapi.DataContext.Base;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +21,8 @@ public class JdbcUtils_C3P0 {
 		return ds.getConnection();
 	}
 
-	public static void release(Connection conn, Statement st, ResultSet rs) {
+	public static void release(Connection conn, Statement st,
+			CallableStatement ct, ResultSet rs) {
 		if (rs != null) {
 			try {
 				rs.close();
@@ -32,6 +34,13 @@ public class JdbcUtils_C3P0 {
 		if (st != null) {
 			try {
 				st.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if (ct != null) {
+			try {
+				ct.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

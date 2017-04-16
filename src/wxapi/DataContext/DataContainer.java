@@ -1,9 +1,9 @@
 package wxapi.DataContext;
 
-import java.sql.ResultSet;
+import java.util.List;
 
 public class DataContainer {
-	public ResultSet rs;
-	
+	public List<Object> data;
+
 	public int rowCount;
 }

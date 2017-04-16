@@ -9,7 +9,7 @@ import org.springframework.web.portlet.ModelAndView;
 public class WxUser {
 
 	@RequestMapping(value = "list", method = RequestMethod.GET)
-	public ModelAndView List() {
+	public ModelAndView list() {
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("wxuser/list");
 		return mv;

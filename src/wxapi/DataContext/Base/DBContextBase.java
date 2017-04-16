@@ -1,4 +1,4 @@
-package wxapi.DataContext;
+package wxapi.DataContext.Base;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -16,8 +16,27 @@ public class DBContextBase {
 
 	private ResultSet rs = null;
 
-	protected Object ExecuteSqlScalar(String sql, Object[] params) {
-		if (!InitExecuteSql(sql, params)) {
+	protected ResultSet executeSql(String sql, Object[] params) {
+		if (!initExecuteSql(sql, params)) {
+			return null;
+		}
+		try {
+			if (params != null) {
+				for (int i = 0; i < params.length; i++) {
+					st.setObject(i + 1, params[i]);
+				}
+			}
+			rs = st.executeQuery();
+			return rs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JdbcUtils_C3P0.release(conn, st, ct, rs);
+			return null;
+		}
+	}
+
+	protected Object executeSqlScalar(String sql, Object[] params) {
+		if (!initExecuteSql(sql, params)) {
 			return null;
 		}
 		try {
@@ -29,13 +48,12 @@ public class DBContextBase {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			JdbcUtils_C3P0.release(conn, st, ct, rs);
 			return null;
-		} finally {
-			JdbcUtils_C3P0.release(conn, st, rs);
 		}
 	}
 
-	private boolean InitExecuteSql(String sql, Object[] params) {
+	private boolean initExecuteSql(String sql, Object[] params) {
 		try {
 			conn = JdbcUtils_C3P0.getConnection();
 			st = conn.prepareStatement(sql);
@@ -47,12 +65,12 @@ public class DBContextBase {
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, st, rs);
+			JdbcUtils_C3P0.release(conn, st, ct, rs);
 			return false;
 		}
 	}
 
-	protected void ExecuteProc() {
+	protected void executeProc() {
 		try {
 			ct.execute();
 		} catch (SQLException e) {
@@ -60,7 +78,7 @@ public class DBContextBase {
 		}
 	}
 
-	protected ResultSet ExecuteProcResultSet() {
+	protected ResultSet executeProcResultSet() {
 		try {
 			rs = ct.executeQuery();
 			return rs;
@@ -72,7 +90,7 @@ public class DBContextBase {
 		}
 	}
 
-	protected void SetObject(int i, Object obj) {
+	protected void setObject(int i, Object obj) {
 		try {
 			ct.setObject(i, obj);
 		} catch (SQLException e) {
@@ -80,7 +98,7 @@ public class DBContextBase {
 		}
 	}
 
-	protected void RegisterOutParameter(int i, int type) {
+	protected void registerOutParameter(int i, int type) {
 		try {
 			ct.registerOutParameter(i, type);
 		} catch (SQLException e) {
@@ -96,19 +114,19 @@ public class DBContextBase {
 		}
 	}
 
-	protected boolean InitExecuteProc(String sql) {
+	protected boolean initExecuteProc(String sql) {
 		try {
 			conn = JdbcUtils_C3P0.getConnection();
 			ct = conn.prepareCall(sql);
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, ct, rs);
+			JdbcUtils_C3P0.release(conn, st, ct, rs);
 			return false;
 		}
 	}
 
-	protected void Release() {
-		JdbcUtils_C3P0.release(conn, st, rs);
+	protected void release() {
+		JdbcUtils_C3P0.release(conn, st, ct, rs);
 	}
 }

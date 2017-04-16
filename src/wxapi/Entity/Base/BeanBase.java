@@ -5,15 +5,15 @@ import java.util.regex.Pattern;
 
 public class BeanBase {
 
-	public boolean ValidateIntRange(int value, int minValue) {
+	public boolean validateIntRange(int value, int minValue) {
 		return value >= minValue;
 	}
 
-	public boolean ValidateIntRange(int value, int minValue, int maxValue) {
+	public boolean validateIntRange(int value, int minValue, int maxValue) {
 		return value >= minValue && value <= maxValue;
 	}
 
-	public boolean ValidateUints(String value) {
+	public boolean validateUints(String value) {
 		if (value == null) {
 			return false;
 		}
@@ -22,8 +22,7 @@ public class BeanBase {
 		return matcher.matches();
 	}
 
-	public boolean ValidateStringRang(String value, boolean canEmpty,
-			int minLength, int maxLength) {
+	public boolean validateStringRang(String value, boolean canEmpty, int minLength, int maxLength) {
 		if (value == null || value.isEmpty()) {
 			return canEmpty;
 		}
@@ -40,7 +39,7 @@ public class BeanBase {
 		return length >= minLength && length <= maxLength;
 	}
 
-	public boolean ValidateStringIsInt(String value, int minValue, int maxValue) {
+	public boolean validateStringIsInt(String value, int minValue, int maxValue) {
 		if (value == null || value.isEmpty()) {
 			return false;
 		}

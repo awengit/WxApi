@@ -31,9 +31,8 @@ public class Result {
 		this.msg = msg;
 	}
 
-	public String ToJson() {
-		return "{issuccess:" + (issuccess ? "true" : "false") + ",code:" + code
-				+ ",msg:\"" + msg + "\"}";
+	public String toJson() {
+		return "{\"issuccess\":" + (issuccess ? "true" : "false") + ",\"code\":" + code + ",\"msg\":\"" + msg + "\"}";
 	}
 
 }
