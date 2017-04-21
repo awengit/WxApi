@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.ArrayList"%>
-<%@ page import="wxapi.Entity.OfficialAccount"%>
+<%@ page import="wxapi.Entity.CategoryFlag"%>
 <!DOCTYPE html>
 <html>
 <head>
-<title>微信公众号列表</title>
+<title>类别标识列表</title>
 <%@include file="/WEB-INF/view/script.jsp"%>
 <script type="text/javascript">
 	function Reflush() {
@@ -75,24 +75,21 @@
 					<col width="200">
 					<col width="250">
 					<col width="300">
-					<col width="400">
 				</colgroup>
 				<thead>
 					<tr>
-						<th>公众号名称</th>
-						<th>公众号</th>
-						<th>AppID</th>
-						<th>Appsecret</th>
-						<th style="text-align: center;">操作(刷新操作是从微信服务器更新到本地)</th>
+						<th>标题</th>
+						<th>标识</th>
+						<th>排序</th>
+						<th style="text-align: center;">操作</th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="a" items="${account}">
+					<c:forEach var="a" items="${array}">
 						<tr>
-							<td>${a.accountname}</td>
-							<td>${a.accountnum}</td>
-							<td>${a.appid}</td>
-							<td>${a.secret}</td>
+							<td>${a.title}</td>
+							<td>${a.flag}</td>
+							<td>${a.ordernum}</td>
 							<td style="text-align: center;"><a title="编辑" onclick="OpenWindowIframe('/officialaccount/modify.html?accountnum=${a.accountnum}','600px','350px')"
 								class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a title="删除" onclick="Delete('${a.accountnum}')" class="layui-btn layui-btn-primary layui-btn-small">删除</a></td>
 						</tr>

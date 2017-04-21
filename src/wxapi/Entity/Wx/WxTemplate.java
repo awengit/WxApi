@@ -1,6 +1,9 @@
 package wxapi.Entity.Wx;
 
 public class WxTemplate {
+
+	private String accountnum;
+
 	private String template_id;
 
 	private String title;
@@ -12,6 +15,14 @@ public class WxTemplate {
 	private String content;
 
 	private String example;
+
+	public String getAccountnum() {
+		return accountnum;
+	}
+
+	public void setAccountnum(String accountnum) {
+		this.accountnum = accountnum;
+	}
 
 	public String getTemplate_id() {
 		return template_id;

@@ -11,13 +11,13 @@
 	   http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
-	<!-- 注解驱动 -->
+	<!-- 使用默认的注解映射 -->
 	<mvc:annotation-driven />
 
 	<!-- 完成请求和注解POJO的映射 -->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
-
+		
 	<!-- 设置使用注解的类所在的jar包 -->
 	<context:component-scan base-package="wxapi.Controller"></context:component-scan>
 

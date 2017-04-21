@@ -1,6 +1,6 @@
 package wxapi.Entity.Wx;
 
-public class WxGroupForCreat {
+public class WxGroupForCreate {
 	public WxGroup group;
 
 	public WxGroup getGroup() {

@@ -13,12 +13,14 @@ import wxapi.Entity.OfficialAccount;
 import wxapi.Entity.View.Result;
 import wxapi.Entity.View.ResultCode;
 
-@Controller("/officialaccount/*")
+@Controller
+@RequestMapping("/officialaccount/*")
 public class OfficialAccountController {
+
 	private OfficialAccountService accountService = new OfficialAccountService();
 
 	@RequestMapping(value = "list")
-	public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView list() {
 		List<OfficialAccount> array = accountService.select();
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("account", array);
@@ -78,20 +80,5 @@ public class OfficialAccountController {
 		}
 		response.getWriter().print(result.toJson());
 	}
-	/*
-	 * @ResponseBody
-	 * 
-	 * @RequestMapping(value = "modify", produces =
-	 * "application/json;charset=UTF-8", method = { RequestMethod.POST }) public
-	 * String modify(OfficialAccount entity) {
-	 * System.out.println(entity.getAccountname());
-	 * System.out.println(entity.getAccountnum());
-	 * System.out.println(entity.getAppid());
-	 * System.out.println(entity.getSecret()); return "您好"; }
-	 * 
-	 * @RequestMapping(value = "test", method = RequestMethod.GET) public void
-	 * test(HttpServletRequest request, HttpServletResponse response) throws
-	 * IOException { response.setContentType("application/json;charset=utf-8");
-	 * response.getWriter().print("您好"); }
-	 */
+
 }

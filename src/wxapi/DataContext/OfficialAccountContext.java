@@ -9,6 +9,7 @@ import wxapi.DataContext.Base.DBContextBase;
 import wxapi.Entity.OfficialAccount;
 
 public class OfficialAccountContext extends DBContextBase {
+
 	public int insertOrUpdate(OfficialAccount entity) {
 		if (initExecuteProc("{call pack_officialaccount.InsertOrUpdate(?,?,?,?,?)}")) {
 			setObject(1, entity.getAccountname());
@@ -40,6 +41,7 @@ public class OfficialAccountContext extends DBContextBase {
 		Object[] params = new Object[] { accountnum };
 		ResultSet rs = executeSql("select * from officialaccount where isdeleted = 0 and accountnum=?", params);
 		List<OfficialAccount> array = toList(rs);
+		release();
 		if (array == null || array.size() <= 0) {
 			return null;
 		}
@@ -54,6 +56,9 @@ public class OfficialAccountContext extends DBContextBase {
 	}
 
 	private List<OfficialAccount> toList(ResultSet rs) {
+		if (rs == null) {
+			return null;
+		}
 		List<OfficialAccount> array = new ArrayList<OfficialAccount>();
 		OfficialAccount account;
 		try {

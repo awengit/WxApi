@@ -53,6 +53,26 @@ public class DBContextBase {
 		}
 	}
 
+	protected int[] executeSqlByBatch(String sql, Object[][] params) {
+		try {
+			conn = JdbcUtils_C3P0.getConnection();
+			st = conn.prepareStatement(sql);
+			if (params != null) {
+				for (int i = 0; i < params.length; i++) {
+					for (int j = 0; j < params[i].length; j++) {
+						st.setObject(j + 1, params[i][j]);
+					}
+					st.addBatch();
+				}
+				return st.executeBatch();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JdbcUtils_C3P0.release(conn, st, ct, rs);
+		}
+		return null;
+	}
+
 	private boolean initExecuteSql(String sql, Object[] params) {
 		try {
 			conn = JdbcUtils_C3P0.getConnection();
