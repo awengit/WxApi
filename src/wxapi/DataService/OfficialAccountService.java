@@ -11,12 +11,12 @@ public class OfficialAccountService {
 		return context.insertOrUpdate(entity);
 	}
 
-	public int remove(String accountnum) {
-		return context.remove(accountnum);
+	public int remove(String accountcode) {
+		return context.remove(accountcode);
 	}
 
-	public OfficialAccount selectByAccountNum(String accountnum) {
-		return context.selectByAccountNum(accountnum);
+	public OfficialAccount selectByAccountCode(String accountcode) {
+		return context.selectByAccountCode(accountcode);
 	}
 
 	public List<OfficialAccount> select() {

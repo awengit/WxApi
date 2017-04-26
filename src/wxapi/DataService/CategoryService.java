@@ -16,6 +16,10 @@ public class CategoryService {
 		return context.update(entity);
 	}
 
+	public List<Category> select() {
+		return context.select();
+	}
+
 	public List<Category> select(String flag) {
 		return context.select(flag);
 	}

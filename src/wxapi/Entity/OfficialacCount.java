@@ -7,6 +7,8 @@ import wxapi.Entity.View.ResultCode;
 
 public class OfficialAccount extends BeanBase implements IValidate {
 
+	private String accountcode;
+
 	private String accountname;
 
 	private String accountnum;
@@ -16,6 +18,14 @@ public class OfficialAccount extends BeanBase implements IValidate {
 	private String secret;
 
 	private boolean isdeleted;
+
+	public String getAccountcode() {
+		return accountcode;
+	}
+
+	public void setAccountcode(String accountcode) {
+		this.accountcode = accountcode;
+	}
 
 	public String getAccountname() {
 		return accountname;
@@ -57,13 +67,17 @@ public class OfficialAccount extends BeanBase implements IValidate {
 		this.isdeleted = isdeleted;
 	}
 
-	public boolean isUpdate;
+	public boolean isUpdate = false;
 
 	@Override
 	public Result validate() {
 		Result result = new Result();
 		result.setIssuccess(false);
 		result.setCode(ResultCode.ParamError.ordinal());
+		if (!isUpdate && !validateStringIsLN(accountcode, false, 0, 20)) {
+			result.setMsg("公众号代码不能为空，并且长度不大于20");
+			return result;
+		}
 		if (!validateStringRang(accountname, false, 0, 20)) {
 			result.setMsg("公众号名称不能为空，并且长度不大于20");
 			return result;

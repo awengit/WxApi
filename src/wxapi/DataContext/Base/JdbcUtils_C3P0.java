@@ -8,7 +8,9 @@ import java.sql.Statement;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class JdbcUtils_C3P0 {
+
 	private static ComboPooledDataSource ds = null;
+
 	static {
 		try {
 			ds = new ComboPooledDataSource();
@@ -21,8 +23,7 @@ public class JdbcUtils_C3P0 {
 		return ds.getConnection();
 	}
 
-	public static void release(Connection conn, Statement st,
-			CallableStatement ct, ResultSet rs) {
+	public static void release(Connection conn, Statement st, CallableStatement ct, ResultSet rs) {
 		if (rs != null) {
 			try {
 				rs.close();

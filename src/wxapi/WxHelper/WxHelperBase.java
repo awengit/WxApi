@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import wxapi.Entity.Wx.AccessToken;
 import wxapi.Entity.Wx.WxResult;
-
 import com.google.gson.Gson;
-
 import avin.web.HttpRequest;
 
 public class WxHelperBase {
@@ -27,14 +24,15 @@ public class WxHelperBase {
 
 	protected static String createGet(String url, String accountnum, String module, String operation) {
 		String result = HttpRequest.createGet(url);
-		// System.out.println(url);
-		// System.out.println(result);
+		System.out.println(url);
+		System.out.println(result);
 		return result;
 	}
 
 	protected static String createPost(String url, String body, String accountnum, String module, String operation) {
-		String result = "";
-		result = HttpRequest.createPost(url, body);
+		String result = HttpRequest.createPost(url, body);
+		System.out.println(url);
+		System.out.println(result);
 		return result;
 	}
 
@@ -80,13 +78,13 @@ public class WxHelperBase {
 			return null;
 		}
 		Gson gson = new Gson();
+		Object obj;
 		if (result.startsWith("{\"errcode\":")) {
-			WxResult wxResult = gson.fromJson(result, WxResult.class);
-			return wxResult;
+			obj = gson.fromJson(result, WxResult.class);
 		} else {
-			Object obj = gson.fromJson(result, clazz);
-			return obj;
+			obj = gson.fromJson(result, clazz);
 		}
+		return obj;
 	}
 
 	private static void addToken(AccessToken token) {

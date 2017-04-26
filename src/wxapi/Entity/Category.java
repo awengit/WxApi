@@ -11,7 +11,8 @@ public class Category extends BeanBase implements IValidate {
 	private String title;
 	private int parentid;
 	private int ordernum;
-	private String Sort;
+	private int grade;
+	private String sort;
 	private String flag;
 	private boolean isdeleted;
 
@@ -47,12 +48,20 @@ public class Category extends BeanBase implements IValidate {
 		this.ordernum = ordernum;
 	}
 
+	public int getGrade() {
+		return grade;
+	}
+
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
+
 	public String getSort() {
-		return Sort;
+		return sort;
 	}
 
 	public void setSort(String sort) {
-		Sort = sort;
+		this.sort = sort;
 	}
 
 	public String getFlag() {
@@ -86,7 +95,7 @@ public class Category extends BeanBase implements IValidate {
 			result.setMsg("排序不能为空，且大小不能超过99999");
 			return result;
 		}
-		if (!isUpdate && !validateStringRang(flag, false, 1, 20)) {
+		if (!isUpdate && parentid == 0 && !validateStringRang(flag, false, 1, 20)) {
 			result.setMsg("标识不能为空，且长度不能超过20个字符");
 			return result;
 		}

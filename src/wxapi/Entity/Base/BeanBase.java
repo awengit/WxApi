@@ -51,4 +51,23 @@ public class BeanBase {
 		}
 	}
 
+	public boolean validateStringIsLN(String value, boolean canEmpty, int minLength, int maxLength) {
+		if (value == null || value.isEmpty()) {
+			return canEmpty;
+		}
+		String strRegex = "^[a-zA-Z0-9]{%d,%d}$";
+		strRegex = String.format(strRegex, minLength, maxLength);
+		Pattern pattern = Pattern.compile(strRegex);
+		return pattern.matcher(value).matches();
+	}
+	
+	public boolean validateStringIsLNS(String value, boolean canEmpty, int minLength, int maxLength) {
+		if (value == null || value.isEmpty()) {
+			return canEmpty;
+		}
+		String strRegex = "^[a-zA-Z0-9!@#+_-]{%d,%d}$";
+		strRegex = String.format(strRegex, minLength, maxLength);
+		Pattern pattern = Pattern.compile(strRegex);
+		return pattern.matcher(value).matches();
+	}
 }

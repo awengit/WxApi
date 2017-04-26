@@ -29,10 +29,10 @@ public class OfficialAccountController {
 	}
 
 	@RequestMapping(value = "modify", method = RequestMethod.GET)
-	public ModelAndView modify(String accountnum) {
+	public ModelAndView modify(String accountcode) {
 		OfficialAccount account = null;
-		if (accountnum != null && !accountnum.isEmpty()) {
-			account = accountService.selectByAccountNum(accountnum);
+		if (accountcode != null && !accountcode.isEmpty()) {
+			account = accountService.selectByAccountCode(accountcode);
 		}
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("officialaccount/modify");
@@ -51,24 +51,24 @@ public class OfficialAccountController {
 			} else {
 				result.setIssuccess(false);
 				result.setCode(ResultCode.PostReturnNotExpected.ordinal());
-				result.setMsg("提交失败");
+				result.setMsg("提交失败，代码或者公众号不允许重复");
 			}
 		}
 		response.getWriter().print(result.toJson());
 	}
 
 	@RequestMapping(value = "delete", method = RequestMethod.POST)
-	public void delete(String accountnum, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void delete(String accountcode, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("application/json; charset=utf-8");
 		Result result = new Result();
-		if (accountnum == null || accountnum.isEmpty()) {
+		if (accountcode == null || accountcode.isEmpty()) {
 			result.setIssuccess(false);
 			result.setCode(ResultCode.ParamError.ordinal());
 			result.setMsg("参数异常");
 			response.getWriter().print(result.toJson());
 			return;
 		}
-		int affect = accountService.remove(accountnum);
+		int affect = accountService.remove(accountcode);
 		if (affect > 0) {
 			result.setIssuccess(true);
 			result.setCode(ResultCode.Success.ordinal());

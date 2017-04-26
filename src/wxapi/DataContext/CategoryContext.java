@@ -11,7 +11,7 @@ import wxapi.Entity.Category;
 public class CategoryContext extends DBContextBase {
 
 	public int insert(Category entity) {
-		if (initExecuteProc("{call pack_category.insertorupdate(?,?,?,?,?)}")) {
+		if (initExecuteProc("{call pack_category.insertdata(?,?,?,?,?)}")) {
 			setObject(1, entity.getTitle());
 			setObject(2, entity.getParentid());
 			setObject(3, entity.getOrdernum());
@@ -27,10 +27,10 @@ public class CategoryContext extends DBContextBase {
 
 	public int update(Category entity) {
 		if (initExecuteProc("{call pack_category.updatedata(?,?,?,?,?)}")) {
-			setObject(1, entity.getTitle());
-			setObject(2, entity.getParentid());
-			setObject(3, entity.getOrdernum());
-			setObject(4, entity.getFlag());
+			setObject(1, entity.getId());
+			setObject(2, entity.getTitle());
+			setObject(3, entity.getParentid());
+			setObject(4, entity.getOrdernum());
 			registerOutParameter(5, Types.INTEGER);
 			executeProc();
 			int affect = (int) getObject(5);
@@ -38,6 +38,13 @@ public class CategoryContext extends DBContextBase {
 			return affect;
 		}
 		return -1;
+	}
+
+	public List<Category> select() {
+		ResultSet rs = executeSql("select * from category where isdeleted = 0  order by sort desc", null);
+		List<Category> array = toList(rs);
+		release();
+		return array;
 	}
 
 	public List<Category> select(String flag) {
@@ -82,6 +89,7 @@ public class CategoryContext extends DBContextBase {
 				temp.setTitle(rs.getString("title"));
 				temp.setParentid(rs.getInt("parentid"));
 				temp.setOrdernum(rs.getInt("ordernum"));
+				temp.setGrade(rs.getInt("grade"));
 				temp.setSort(rs.getString("sort"));
 				temp.setFlag(rs.getString("flag"));
 				temp.setIsdeleted(rs.getBoolean("isdeleted"));

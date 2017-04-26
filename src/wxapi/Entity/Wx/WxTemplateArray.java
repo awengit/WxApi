@@ -3,6 +3,7 @@ package wxapi.Entity.Wx;
 import java.util.List;
 
 public class WxTemplateArray {
+
 	private List<WxTemplate> template_list;
 
 	public List<WxTemplate> getTemplate_list() {

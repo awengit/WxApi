@@ -37,7 +37,7 @@ public class CategoryFlagContext extends DBContextBase {
 	}
 
 	public List<CategoryFlag> select() {
-		ResultSet rs = executeSql("select * from categoryflag where isdeleted = 0", null);
+		ResultSet rs = executeSql("select * from categoryflag where isdeleted = 0 order by ordernum desc", null);
 		List<CategoryFlag> array = toList(rs);
 		release();
 		return array;

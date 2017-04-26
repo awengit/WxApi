@@ -3,6 +3,7 @@ package wxapi.Entity.Wx;
 import java.util.List;
 
 public class WxGroupArray {
+
 	private List<WxGroup> groups;
 
 	public List<WxGroup> getGroups() {

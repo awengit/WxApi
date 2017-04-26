@@ -10,9 +10,9 @@ public class DBContextBase {
 
 	private Connection conn = null;
 
-	private PreparedStatement st = null;
+	private PreparedStatement ps = null;
 
-	private CallableStatement ct = null;
+	private CallableStatement cs = null;
 
 	private ResultSet rs = null;
 
@@ -23,15 +23,35 @@ public class DBContextBase {
 		try {
 			if (params != null) {
 				for (int i = 0; i < params.length; i++) {
-					st.setObject(i + 1, params[i]);
+					ps.setObject(i + 1, params[i]);
 				}
 			}
-			rs = st.executeQuery();
+			rs = ps.executeQuery();
 			return rs;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, st, ct, rs);
+			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 			return null;
+		}
+	}
+
+	protected int executeSqlNonQuery(String sql, Object[] params) {
+		if (!initExecuteSql(sql, params)) {
+			return 0;
+		}
+		try {
+			if (params != null) {
+				for (int i = 0; i < params.length; i++) {
+					ps.setObject(i + 1, params[i]);
+				}
+			}
+			int affect = ps.executeUpdate();
+			return affect;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		} finally {
+			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 		}
 	}
 
@@ -40,7 +60,7 @@ public class DBContextBase {
 			return null;
 		}
 		try {
-			rs = st.executeQuery();
+			rs = ps.executeQuery();
 			if (rs.next()) {
 				return rs.getObject(0);
 			} else {
@@ -48,7 +68,7 @@ public class DBContextBase {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, st, ct, rs);
+			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 			return null;
 		}
 	}
@@ -56,19 +76,24 @@ public class DBContextBase {
 	protected int[] executeSqlByBatch(String sql, Object[][] params) {
 		try {
 			conn = JdbcUtils_C3P0.getConnection();
-			st = conn.prepareStatement(sql);
+			ps = conn.prepareStatement(sql);
 			if (params != null) {
 				for (int i = 0; i < params.length; i++) {
 					for (int j = 0; j < params[i].length; j++) {
-						st.setObject(j + 1, params[i][j]);
+						ps.setObject(j + 1, params[i][j]);
 					}
-					st.addBatch();
+					ps.addBatch();
+					if (i % 99 == 0) {
+						ps.executeBatch();
+					}
 				}
-				return st.executeBatch();
+				int[] result = ps.executeBatch();
+				return result;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, st, ct, rs);
+		} finally {
+			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 		}
 		return null;
 	}
@@ -76,23 +101,23 @@ public class DBContextBase {
 	private boolean initExecuteSql(String sql, Object[] params) {
 		try {
 			conn = JdbcUtils_C3P0.getConnection();
-			st = conn.prepareStatement(sql);
+			ps = conn.prepareStatement(sql);
 			if (params != null) {
 				for (int i = 0; i < params.length; i++) {
-					st.setObject(i + 1, params[i]);
+					ps.setObject(i + 1, params[i]);
 				}
 			}
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, st, ct, rs);
+			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 			return false;
 		}
 	}
 
 	protected void executeProc() {
 		try {
-			ct.execute();
+			cs.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +125,7 @@ public class DBContextBase {
 
 	protected ResultSet executeProcResultSet() {
 		try {
-			rs = ct.executeQuery();
+			rs = cs.executeQuery();
 			return rs;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -112,7 +137,7 @@ public class DBContextBase {
 
 	protected void setObject(int i, Object obj) {
 		try {
-			ct.setObject(i, obj);
+			cs.setObject(i, obj);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -120,7 +145,7 @@ public class DBContextBase {
 
 	protected void registerOutParameter(int i, int type) {
 		try {
-			ct.registerOutParameter(i, type);
+			cs.registerOutParameter(i, type);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +153,7 @@ public class DBContextBase {
 
 	protected Object getObject(int i) {
 		try {
-			return ct.getObject(i);
+			return cs.getObject(i);
 		} catch (SQLException e) {
 			return null;
 		}
@@ -137,16 +162,16 @@ public class DBContextBase {
 	protected boolean initExecuteProc(String sql) {
 		try {
 			conn = JdbcUtils_C3P0.getConnection();
-			ct = conn.prepareCall(sql);
+			cs = conn.prepareCall(sql);
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, st, ct, rs);
+			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 			return false;
 		}
 	}
 
 	protected void release() {
-		JdbcUtils_C3P0.release(conn, st, ct, rs);
+		JdbcUtils_C3P0.release(conn, ps, cs, rs);
 	}
 }

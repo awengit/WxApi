@@ -11,48 +11,17 @@
 	function Reflush() {
 		window.location.reload(true);
 	}
-	function FlushUser(accountnum) {
-		AjaxToServ({
-			accountnum : accountnum
-		}, 'POST', '/FocusUser/Flush.html', null, null, function(data) {
-			layui.use('layer', function() {
-				var layer = layui.layer;
-				layer.msg('成功');
-			});
-		}, null);
-	}
-	function FlushGroup(accountnum) {
-		AjaxToServ({
-			accountnum : accountnum
-		}, 'POST', '/Group/Flush.html', null, null, function(data) {
-			layui.use('layer', function() {
-				var layer = layui.layer;
-				layer.msg('成功');
-			});
-		}, null);
-	}
-	function FlushTemplate(accountnum) {
-		AjaxToServ({
-			accountnum : account_num
-		}, 'POST', '/Template/Flush.html', null, null, function(data) {
-			layui.use('layer', function() {
-				var layer = layui.layer;
-				layer.msg('成功');
-			});
-		}, null);
-	}
-	function Delete(accountnum) {
+	function Delete(flag) {
 		layui.use('layer', function() {
 			layer.open({
 				title : '删除',
 				content : '确定删除？',
-				btn : ['yes', 'no'],
+				btn : [ 'yes', 'no' ],
 				yes : function(index, layero) {
 					layer.close(index);
 					AjaxToServ({
-						accountnum : accountnum
-					}, 'POST', '/officialaccount/delete.html',
-							'/officialaccount/list.html', null, null, null);
+						flag : flag
+					}, 'POST', '/categoryflag/delete.html', '/categoryflag/list.html', null, null, null);
 				},
 				no : function(index, layero) {
 				},
@@ -67,14 +36,14 @@
 	<div class="inner-page">
 		<form id="mainform" class="layui-form layui-form-pane" action="" method="post">
 			<div class="layui-form-item">
-				<a class="layui-btn layui-btn-primary" onclick="OpenWindowIframe('/officialaccount/modify.html','500px','350px')">添加</a>
+				<a class="layui-btn layui-btn-primary" onclick="OpenWindowIframe('/categoryflag/modify.html','400px','300px')">添加类别标识</a>
 			</div>
 			<table class="layui-table">
 				<colgroup>
 					<col>
 					<col width="200">
-					<col width="250">
-					<col width="300">
+					<col width="100">
+					<col width="150">
 				</colgroup>
 				<thead>
 					<tr>
@@ -90,8 +59,8 @@
 							<td>${a.title}</td>
 							<td>${a.flag}</td>
 							<td>${a.ordernum}</td>
-							<td style="text-align: center;"><a title="编辑" onclick="OpenWindowIframe('/officialaccount/modify.html?accountnum=${a.accountnum}','600px','350px')"
-								class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a title="删除" onclick="Delete('${a.accountnum}')" class="layui-btn layui-btn-primary layui-btn-small">删除</a></td>
+							<td style="text-align: center;"><a title="编辑" onclick="OpenWindowIframe('/categoryflag/modify.html?flag=${a.flag}','400px','200px')" class="layui-btn layui-btn-primary layui-btn-small">编辑</a>
+								<a title="删除" onclick="Delete('${a.flag}')" class="layui-btn layui-btn-primary layui-btn-small">删除</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

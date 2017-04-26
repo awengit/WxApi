@@ -11,23 +11,24 @@ import wxapi.Entity.OfficialAccount;
 public class OfficialAccountContext extends DBContextBase {
 
 	public int insertOrUpdate(OfficialAccount entity) {
-		if (initExecuteProc("{call pack_officialaccount.InsertOrUpdate(?,?,?,?,?)}")) {
-			setObject(1, entity.getAccountname());
-			setObject(2, entity.getAccountnum());
-			setObject(3, entity.getAppid());
-			setObject(4, entity.getSecret());
-			registerOutParameter(5, Types.INTEGER);
+		if (initExecuteProc("{call pack_officialaccount.InsertOrUpdate(?,?,?,?,?,?)}")) {
+			setObject(1, entity.getAccountcode());
+			setObject(2, entity.getAccountname());
+			setObject(3, entity.getAccountnum());
+			setObject(4, entity.getAppid());
+			setObject(5, entity.getSecret());
+			registerOutParameter(6, Types.INTEGER);
 			executeProc();
-			int affect = (int) getObject(5);
+			int affect = (int) getObject(6);
 			release();
 			return affect;
 		}
 		return -1;
 	}
 
-	public int remove(String accountnum) {
+	public int remove(String accountcode) {
 		if (initExecuteProc("{call pack_officialaccount.Remove(?,?)}")) {
-			setObject(1, accountnum);
+			setObject(1, accountcode);
 			registerOutParameter(2, Types.INTEGER);
 			executeProc();
 			int affect = (int) getObject(2);
@@ -37,9 +38,9 @@ public class OfficialAccountContext extends DBContextBase {
 		return -1;
 	}
 
-	public OfficialAccount selectByAccountNum(String accountnum) {
-		Object[] params = new Object[] { accountnum };
-		ResultSet rs = executeSql("select * from officialaccount where isdeleted = 0 and accountnum=?", params);
+	public OfficialAccount selectByAccountCode(String accountcode) {
+		Object[] params = new Object[] { accountcode };
+		ResultSet rs = executeSql("select * from officialaccount where isdeleted = 0 and accountcode=upper(?)", params);
 		List<OfficialAccount> array = toList(rs);
 		release();
 		if (array == null || array.size() <= 0) {
@@ -64,6 +65,7 @@ public class OfficialAccountContext extends DBContextBase {
 		try {
 			while (rs.next()) {
 				account = new OfficialAccount();
+				account.setAccountcode(rs.getString("accountcode"));
 				account.setAccountname(rs.getString("accountname"));
 				account.setAccountnum(rs.getString("accountnum"));
 				account.setAppid((rs.getString("appid")));

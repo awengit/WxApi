@@ -44,13 +44,14 @@ public class WxUserHelper extends WxHelperBase {
 		String strResult = "";
 		WxUserInfoArray userInfoArray = new WxUserInfoArray();
 		StringBuilder sb = new StringBuilder();
+		Object obj;
 		for (int i = 0; i < openids.size(); i++) {
 			sb.append("{\"openid\": \"" + openids.get(i) + "\",  \"lang\": \"zh-CN\"},");
 			if ((i % 99) == 0 || i == (openids.size() - 1)) {
 				strTemp = "{\"user_list\": [" + sb.toString().substring(0, sb.length() - 1) + "]}";
 				strResult = createPost(strUrl, accessToken.accountnum, ModuleName, "getWxUserInfoArray", strTemp);
-				Object obj = initResult(strResult, WxUserInfoArray.class);
-				if (obj != null && obj instanceof WxUserInfoArray) {
+				obj = initResult(strResult, WxUserInfoArray.class);
+				if (obj instanceof WxUserInfoArray) {
 					userInfoArray.getUser_info_list().addAll(((WxUserInfoArray) obj).getUser_info_list());
 				} else {
 					System.out.println(strResult);
@@ -80,7 +81,6 @@ public class WxUserHelper extends WxHelperBase {
 		strUrl = String.format(strUrl, accessToken.access_token);
 		String strJson = "{\"openid\":\"" + openid + "\",\"remark\":\"" + remark + "\"}";
 		String strResult = createPost(strUrl, strJson, accessToken.accountnum, ModuleName, "updateRemark");
-		wxResult = (WxResult) initResult(strResult, WxResult.class);
-		return wxResult;
+		return (WxResult) initResult(strResult, WxUser.class);
 	}
 }

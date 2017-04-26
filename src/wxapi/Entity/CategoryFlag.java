@@ -56,11 +56,11 @@ public class CategoryFlag extends BeanBase implements IValidate {
 			return result;
 		}
 		if (!isUpdate && !validateIntRange(ordernum, 1, 99999)) {
-			result.setMsg("排序不能为空，且大小不能超过99999");
+			result.setMsg("排序不能为空，只能为正整数，且大小不能超过99999");
 			return result;
 		}
-		if (!isUpdate && !validateStringRang(flag, false, 1, 20)) {
-			result.setMsg("标识不能为空，且长度不能超过20个字符");
+		if (!isUpdate && !validateStringIsLN(flag, false, 1, 20)) {
+			result.setMsg("标识不能为空，只能字母数字组合，且长度不能超过20个字符");
 			return result;
 		}
 		result.setIssuccess(true);

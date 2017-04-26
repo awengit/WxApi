@@ -1,0 +1,16 @@
+数据库异常返回
+Dup_val_on_index	唯一索引上有重复值	-10000
+no_data_found		没有记录				-10001
+不能设置为子级的信息 						-10002
+others									-10100
+
+
+实现的功能
+微信模块：
+	officialaccount
+登录模块：
+	loginuser(只处理表)
+公用模块：
+	category
+	categoryflag
+	
