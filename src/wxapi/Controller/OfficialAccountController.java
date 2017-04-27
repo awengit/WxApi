@@ -8,16 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import wxapi.DataService.OfficialAccountService;
 import wxapi.Entity.OfficialAccount;
 import wxapi.Entity.View.Result;
 import wxapi.Entity.View.ResultCode;
 
 @Controller
 @RequestMapping("/officialaccount/*")
-public class OfficialAccountController {
-
-	private OfficialAccountService accountService = new OfficialAccountService();
+public class OfficialAccountController extends ControllerBase {
 
 	@RequestMapping(value = "list")
 	public ModelAndView list() {

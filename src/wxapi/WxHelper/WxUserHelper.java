@@ -1,9 +1,12 @@
 package wxapi.WxHelper;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import wxapi.Entity.Wx.AccessToken;
 import wxapi.Entity.Wx.WxResult;
 import wxapi.Entity.Wx.WxUser;
+import wxapi.Entity.Wx.WxUserInfo;
 import wxapi.Entity.Wx.WxUserInfoArray;
 
 public class WxUserHelper extends WxHelperBase {
@@ -34,7 +37,7 @@ public class WxUserHelper extends WxHelperBase {
 	 * @param openids
 	 * @return
 	 */
-	public Object getWxUserInfoArray(AccessToken accessToken, List<String> openids) {
+	public List<WxUserInfo> getWxUserInfoArray(AccessToken accessToken, List<String> openids) {
 		if (accessToken == null || openids == null || openids.size() == 0) {
 			return null;
 		}
@@ -42,7 +45,7 @@ public class WxUserHelper extends WxHelperBase {
 		strUrl = String.format(strUrl, accessToken.access_token);
 		String strTemp = "";
 		String strResult = "";
-		WxUserInfoArray userInfoArray = new WxUserInfoArray();
+		List<WxUserInfo> userInfoArray = new ArrayList<WxUserInfo>();
 		StringBuilder sb = new StringBuilder();
 		Object obj;
 		for (int i = 0; i < openids.size(); i++) {
@@ -52,7 +55,7 @@ public class WxUserHelper extends WxHelperBase {
 				strResult = createPost(strUrl, accessToken.accountnum, ModuleName, "getWxUserInfoArray", strTemp);
 				obj = initResult(strResult, WxUserInfoArray.class);
 				if (obj instanceof WxUserInfoArray) {
-					userInfoArray.getUser_info_list().addAll(((WxUserInfoArray) obj).getUser_info_list());
+					userInfoArray.addAll(((WxUserInfoArray) obj).getUser_info_list());
 				} else {
 					System.out.println(strResult);
 				}

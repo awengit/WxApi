@@ -19,7 +19,7 @@
 	PostDataToServ('postData', 'POST', '/officialaccount/modify.html', '', null, function(data) {
 		var index = parent.layer.getFrameIndex(window.name);
 		parent.layer.close(index);
-		parent.Reflush();
+		parent.Refresh();
 	}, null);
 </script>
 </head>

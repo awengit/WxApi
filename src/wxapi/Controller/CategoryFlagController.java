@@ -8,16 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import wxapi.DataService.CategoryFlagService;
 import wxapi.Entity.CategoryFlag;
 import wxapi.Entity.View.Result;
 import wxapi.Entity.View.ResultCode;
 
 @Controller
 @RequestMapping("/categoryflag/*")
-public class CategoryFlagController {
-
-	CategoryFlagService categoryFlagService = new CategoryFlagService();
+public class CategoryFlagController extends ControllerBase {
 
 	@RequestMapping(value = "list")
 	public ModelAndView list() {

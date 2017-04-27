@@ -83,12 +83,10 @@ public class DBContextBase {
 						ps.setObject(j + 1, params[i][j]);
 					}
 					ps.addBatch();
-					if (i % 99 == 0) {
+					if (i % 99 == 0 || i == params.length) {
 						ps.executeBatch();
 					}
 				}
-				int[] result = ps.executeBatch();
-				return result;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

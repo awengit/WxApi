@@ -2,15 +2,24 @@ package wxapi.Controller;
 
 import java.util.List;
 
+import wxapi.DataService.CategoryFlagService;
+import wxapi.DataService.CategoryService;
 import wxapi.DataService.OfficialAccountService;
 import wxapi.DataService.WxGroupService;
+import wxapi.DataService.WxUserService;
 import wxapi.Entity.OfficialAccount;
 
 public class ControllerBase {
 
+	protected static CategoryFlagService categoryFlagService = new CategoryFlagService();
+
+	protected static CategoryService categoryService = new CategoryService();
+
 	protected static OfficialAccountService accountService = new OfficialAccountService();
 
 	protected static WxGroupService wxGroupService = new WxGroupService();
+
+	protected static WxUserService wxUserService = new WxUserService();
 
 	/**
 	 * 获取当前登录用户信息
