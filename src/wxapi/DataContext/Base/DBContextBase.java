@@ -8,43 +8,53 @@ import java.sql.SQLException;
 
 public class DBContextBase {
 
-	private Connection conn = null;
+	protected Connection conn = null;
 
-	private PreparedStatement ps = null;
+	protected PreparedStatement ps = null;
 
-	private CallableStatement cs = null;
+	protected CallableStatement cs = null;
 
-	private ResultSet rs = null;
+	protected ResultSet rs = null;
 
-	protected ResultSet executeSql(String sql, Object[] params) {
+	/**
+	 * 执行SQL，返回Object
+	 * 
+	 * @param sql
+	 * @param params
+	 * @param before
+	 * @return
+	 */
+	protected Object executeSql(String sql, Object[] params, ISQLOperate after) {
 		if (!initExecuteSql(sql, params)) {
 			return null;
 		}
 		try {
-			if (params != null) {
-				for (int i = 0; i < params.length; i++) {
-					ps.setObject(i + 1, params[i]);
-				}
-			}
 			rs = ps.executeQuery();
-			return rs;
+			Object object = null;
+			if (after != null) {
+				object = after.operate(null, conn, ps, cs, rs);
+			}
+			return object;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 			return null;
+		} finally {
+			JdbcUtils_C3P0.release(conn, ps, cs, rs);
 		}
 	}
 
+	/**
+	 * 执行SQL，返回受影响行数
+	 * 
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
 	protected int executeSqlNonQuery(String sql, Object[] params) {
 		if (!initExecuteSql(sql, params)) {
 			return 0;
 		}
 		try {
-			if (params != null) {
-				for (int i = 0; i < params.length; i++) {
-					ps.setObject(i + 1, params[i]);
-				}
-			}
 			int affect = ps.executeUpdate();
 			return affect;
 		} catch (SQLException e) {
@@ -55,6 +65,13 @@ public class DBContextBase {
 		}
 	}
 
+	/**
+	 * 执行SQL，返回第一行第一列
+	 * 
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
 	protected Object executeSqlScalar(String sql, Object[] params) {
 		if (!initExecuteSql(sql, params)) {
 			return null;
@@ -73,20 +90,19 @@ public class DBContextBase {
 		}
 	}
 
-	protected int[] executeSqlByBatch(String sql, Object[][] params) {
+	/**
+	 * 批量执行SQL
+	 * 
+	 * @param sql
+	 * @param before
+	 * @return
+	 */
+	protected int[] executeSqlByBatch(String sql, Object[] param, ISQLOperate before) {
 		try {
-			conn = JdbcUtils_C3P0.getConnection();
-			ps = conn.prepareStatement(sql);
-			if (params != null) {
-				for (int i = 0; i < params.length; i++) {
-					for (int j = 0; j < params[i].length; j++) {
-						ps.setObject(j + 1, params[i][j]);
-					}
-					ps.addBatch();
-					if (i % 99 == 0 || i == params.length) {
-						ps.executeBatch();
-					}
-				}
+			if (before != null) {
+				conn = JdbcUtils_C3P0.getConnection();
+				ps = conn.prepareStatement(sql);
+				before.operate(param, conn, ps, cs, rs);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -96,6 +112,13 @@ public class DBContextBase {
 		return null;
 	}
 
+	/**
+	 * 初始化执行SQL
+	 * 
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
 	private boolean initExecuteSql(String sql, Object[] params) {
 		try {
 			conn = JdbcUtils_C3P0.getConnection();
@@ -113,59 +136,64 @@ public class DBContextBase {
 		}
 	}
 
-	protected void executeProc() {
-		try {
-			cs.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	/*
+	 * protected void executeProc() { try { cs.execute(); } catch (SQLException
+	 * e) { e.printStackTrace(); } }
+	 * 
+	 * protected ResultSet executeProcResultSet() { try { rs =
+	 * cs.executeQuery(); return rs; } catch (SQLException e) {
+	 * e.printStackTrace(); return null; } finally { //
+	 * JdbcUtils_C3P0.release(conn, st, rs); } }
+	 * 
+	 * protected void setObject(int i, Object obj) { try { cs.setObject(i, obj);
+	 * } catch (SQLException e) { e.printStackTrace(); } }
+	 * 
+	 * protected void registerOutParameter(int i, int type) { try {
+	 * cs.registerOutParameter(i, type); } catch (SQLException e) {
+	 * e.printStackTrace(); } }
+	 * 
+	 * protected Object getObject(int i) { try { return cs.getObject(i); } catch
+	 * (SQLException e) { return null; } }
+	 * 
+	 * protected boolean initExecuteProc(String sql) { try { conn =
+	 * JdbcUtils_C3P0.getConnection(); cs = conn.prepareCall(sql); return true;
+	 * } catch (SQLException e) { e.printStackTrace();
+	 * JdbcUtils_C3P0.release(conn, ps, cs, rs); return false; } }
+	 */
 
-	protected ResultSet executeProcResultSet() {
+	/**
+	 * 执行存储过程
+	 * 
+	 * @param sql
+	 *            存储过程名称
+	 * @param before
+	 *            执行前回调
+	 * @param beforeParam
+	 *            执行前回调参数
+	 * @param after
+	 *            执行后回调
+	 * @param afterParam
+	 *            执行后回调参数
+	 * @return
+	 */
+	protected Object executeProc(String sql, ISQLOperate before, Object[] beforeParam, ISQLOperate after, Object[] afterParam) {
 		try {
+			conn = JdbcUtils_C3P0.getConnection();
+			cs = conn.prepareCall(sql);
+			if (before != null) {
+				before.operate(beforeParam, conn, ps, cs, rs);
+			}
 			rs = cs.executeQuery();
-			return rs;
+			Object obj = null;
+			if (after != null) {
+				obj = after.operate(afterParam, conn, ps, cs, rs);
+			}
+			return obj;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		} finally {
-			// JdbcUtils_C3P0.release(conn, st, rs);
-		}
-	}
-
-	protected void setObject(int i, Object obj) {
-		try {
-			cs.setObject(i, obj);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void registerOutParameter(int i, int type) {
-		try {
-			cs.registerOutParameter(i, type);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected Object getObject(int i) {
-		try {
-			return cs.getObject(i);
-		} catch (SQLException e) {
-			return null;
-		}
-	}
-
-	protected boolean initExecuteProc(String sql) {
-		try {
-			conn = JdbcUtils_C3P0.getConnection();
-			cs = conn.prepareCall(sql);
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
 			JdbcUtils_C3P0.release(conn, ps, cs, rs);
-			return false;
 		}
 	}
 

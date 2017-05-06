@@ -1,6 +1,8 @@
 package wxapi.Controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import wxapi.Entity.OfficialAccount;
 import wxapi.Entity.WxGroup;
+import wxapi.Entity.Base.BeanBase;
 import wxapi.Entity.View.Result;
+import wxapi.Entity.View.Result2;
 import wxapi.Entity.View.ResultCode;
 import wxapi.Entity.Wx.AccessToken;
 import wxapi.Entity.Wx.WxGroupArray;
 import wxapi.Entity.Wx.WxGroupForCreate;
 import wxapi.Entity.Wx.WxResult;
 import wxapi.WxHelper.WxGroupHelper;
-import wxapi.WxHelper.WxHelperBase;
 
 @Controller
 @RequestMapping("/wxgroup/*")
@@ -36,7 +38,7 @@ public class WxGroupController extends ControllerBase {
 			groups = wxGroupService.selectByAccountcode(accountcode);
 		}
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("account", getCurUserInfo().wxaccount);
+		mv.addObject("account", getLoginUserInfo().wxaccount);
 		mv.addObject("accountcode", accountcode);
 		mv.addObject("groups", groups);
 		mv.setViewName("wxgroup/list");
@@ -70,33 +72,30 @@ public class WxGroupController extends ControllerBase {
 			response.getWriter().print(result.toJson());
 			return;
 		}
+		Result2<AccessToken> resultAccessToken = getAccessToken(accountcode);
+		if (!resultAccessToken.getIssuccess()) {
+			result.setIssuccess(false);
+			result.setCode(resultAccessToken.getCode());
+			result.setMsg(resultAccessToken.getMsg());
+			response.getWriter().print(result.toJson());
+			return;
+		}
 		result.setIssuccess(false);
-		result.setCode(ResultCode.ParamError.ordinal());
-		OfficialAccount account = accountService.selectByAccountCode(accountcode);
-		if (account == null) {
-			result.setMsg("account is null");
-			response.getWriter().print(result.toJson());
-			return;
-		}
-		Object obj = WxHelperBase.getAccessToken(account.getAccountnum(), account.getAppid(), account.getSecret());
-		if (!(obj instanceof AccessToken)) {
-			result.setMsg("获取token失败");
-			response.getWriter().print(result.toJson());
-			return;
-		}
 		WxGroupHelper groupHelper = new WxGroupHelper();
 		if (group.getGroupid() <= 2) {
-			obj = groupHelper.create((AccessToken) obj, group.getGroupname());
-			if (!(obj instanceof WxGroupForCreate)) {
-				result.setMsg("微信端新建分组失败");
+			Result2<WxGroupForCreate> resultWxGroupForCreate = groupHelper.create(resultAccessToken.getParam(), group.getGroupname());
+			if (!resultWxGroupForCreate.getIssuccess()) {
+				result.setCode(resultWxGroupForCreate.getCode());
+				result.setMsg(resultWxGroupForCreate.getMsg());
 				response.getWriter().print(result.toJson());
 				return;
 			}
-			group.setGroupid(((WxGroupForCreate) obj).getGroup().getId());
+			group.setGroupid(resultWxGroupForCreate.getParam().getGroup().getId());
 		} else {
-			WxResult wxResult = groupHelper.update((AccessToken) obj, group.getGroupid(), group.getGroupname());
-			if (wxResult.getErrcode() != 0) {
-				result.setMsg("微信端更新分组失败");
+			Result2<WxResult> resultWxResult = groupHelper.update(resultAccessToken.getParam(), group.getGroupid(), group.getGroupname());
+			if (!resultWxResult.getIssuccess()) {
+				result.setCode(resultWxResult.getCode());
+				result.setMsg(resultWxResult.getMsg());
 				response.getWriter().print(result.toJson());
 				return;
 			}
@@ -121,34 +120,25 @@ public class WxGroupController extends ControllerBase {
 			response.getWriter().print(result.toJson());
 			return;
 		}
-		OfficialAccount account = accountService.selectByAccountCode(accountcode);
-		if (account == null) {
-			result.setMsg("account is null");
-			response.getWriter().print(result.toJson());
-			return;
-		}
-		Object obj = WxHelperBase.getAccessToken(account.getAccountnum(), account.getAppid(), account.getSecret());
-		if (!(obj instanceof AccessToken)) {
-			result.setMsg("token is null");
+		Result2<AccessToken> resultAccessToken = getAccessToken(accountcode);
+		if (!resultAccessToken.getIssuccess()) {
+			result.setIssuccess(false);
+			result.setCode(resultAccessToken.getCode());
+			result.setMsg(resultAccessToken.getMsg());
 			response.getWriter().print(result.toJson());
 			return;
 		}
 		WxGroupHelper helper = new WxGroupHelper();
-		obj = helper.get((AccessToken) obj);
-		if (obj instanceof WxGroupArray) {
-			WxGroupArray array = (WxGroupArray) obj;
-			wxGroupService.batchInsert(array.getGroups(), account.getAccountnum());
+		Result2<WxGroupArray> resultWxGroupArray = helper.get(resultAccessToken.getParam());
+		if (resultWxGroupArray.getIssuccess()) {
+			wxGroupService.batchInsert(resultWxGroupArray.getParam().getGroups(), getValidWxAccountNum(accountcode));
 			result.setIssuccess(true);
 			result.setCode(ResultCode.Success.ordinal());
 			result.setMsg("成功");
 		} else {
-			if (obj == null) {
-				result.setMsg("null from wx");
-			} else {
-				WxResult wxResult = (WxResult) obj;
-				result.setCode(wxResult.getErrcode());
-				result.setMsg(wxResult.getErrmsg());
-			}
+			result.setIssuccess(false);
+			result.setCode(resultWxGroupArray.getCode());
+			result.setMsg(resultWxGroupArray.getMsg());
 		}
 		response.getWriter().print(result.toJson());
 	}
@@ -164,29 +154,63 @@ public class WxGroupController extends ControllerBase {
 			response.getWriter().print(result.toJson());
 			return;
 		}
-		OfficialAccount account = accountService.selectByAccountCode(accountcode);
-		if (account == null) {
-			result.setMsg("account is null");
-			response.getWriter().print(result.toJson());
-			return;
-		}
-		Object obj = WxHelperBase.getAccessToken(account.getAccountnum(), account.getAppid(), account.getSecret());
-		if (!(obj instanceof AccessToken)) {
-			result.setMsg("token is null");
+		Result2<AccessToken> resultAccessToken = getAccessToken(accountcode);
+		if (!resultAccessToken.getIssuccess()) {
+			result.setIssuccess(false);
+			result.setCode(resultAccessToken.getCode());
+			result.setMsg(resultAccessToken.getMsg());
 			response.getWriter().print(result.toJson());
 			return;
 		}
 		WxGroupHelper helper = new WxGroupHelper();
-		WxResult wxResult = helper.delete((AccessToken) obj, groupid.intValue());
-		if (wxResult == null || wxResult.getErrcode() != 0) {
-			result.setMsg("微信端删除分组失败");
+		Result2<WxResult> resultWxResult = helper.delete(resultAccessToken.getParam(), groupid.intValue());
+		if (!resultWxResult.getIssuccess()) {
+			result.setIssuccess(false);
+			result.setCode(resultAccessToken.getCode());
+			result.setMsg(resultAccessToken.getMsg());
 		} else {
 			if (wxGroupService.remove(accountcode, groupid.intValue()) > 0) {
 				result.setIssuccess(true);
 				result.setCode(ResultCode.Success.ordinal());
 			} else {
+				result.setIssuccess(false);
+				result.setCode(ResultCode.PostReturnNotExpected.ordinal());
 				result.setMsg("数据库删除分组失败");
 			}
+		}
+		response.getWriter().print(result.toJson());
+	}
+
+	@RequestMapping(value = "batchmovetogroup", method = RequestMethod.POST)
+	public void batchMoveToGroup(String accountcode, String openids, Integer togroupid, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType("application/json; charset=utf-8");
+		Result result = new Result();
+		result.setIssuccess(false);
+		if (accountcode == null || accountcode.isEmpty() || openids == null || openids.isEmpty() || togroupid == null || togroupid.intValue() < 0 || !BeanBase.validateStringIsPasswords(openids, false, 3, 10000)) {
+			result.setMsg("参数有误");
+			response.getWriter().print(result.toJson());
+			return;
+		}
+		Result2<AccessToken> resultAccessToken = getAccessToken(accountcode);
+		if (!resultAccessToken.getIssuccess()) {
+			result.setIssuccess(false);
+			result.setCode(resultAccessToken.getCode());
+			result.setMsg(resultAccessToken.getMsg());
+			response.getWriter().print(result.toJson());
+			return;
+		}
+		String[] openidArray = openids.split(",");
+		List<String> openidList = new ArrayList<String>(Arrays.asList(openidArray));
+		WxGroupHelper wxGroupHelper = new WxGroupHelper();
+		Result2<WxResult> resultWxResult = wxGroupHelper.batchMoveToGroup(resultAccessToken.getParam(), openidList, togroupid.intValue());
+		if (!resultWxResult.getIssuccess()) {
+			result.setIssuccess(false);
+			result.setCode(resultAccessToken.getCode());
+			result.setMsg(resultAccessToken.getMsg());
+		} else {
+			wxGroupService.batchMoveToGroup(accountcode, openids, togroupid.intValue());
+			result.setIssuccess(true);
+			result.setCode(ResultCode.Success.ordinal());
 		}
 		response.getWriter().print(result.toJson());
 	}

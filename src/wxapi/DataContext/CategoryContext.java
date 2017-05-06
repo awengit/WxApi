@@ -1,63 +1,105 @@
 package wxapi.DataContext;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
 import wxapi.DataContext.Base.DBContextBase;
+import wxapi.DataContext.Base.ISQLOperate;
 import wxapi.Entity.Category;
 
 public class CategoryContext extends DBContextBase {
 
 	public int insert(Category entity) {
-		if (initExecuteProc("{call pack_category.insertdata(?,?,?,?,?)}")) {
-			setObject(1, entity.getTitle());
-			setObject(2, entity.getParentid());
-			setObject(3, entity.getOrdernum());
-			setObject(4, entity.getFlag());
-			registerOutParameter(5, Types.INTEGER);
-			executeProc();
-			int affect = (int) getObject(5);
-			release();
-			return affect;
+		Object object = executeProc("{call pack_category.insertdata(?,?,?,?,?,?)}", new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				Category entity = (Category) param[0];
+				cs.setString(1, entity.getTitle());
+				cs.setInt(2, entity.getParentid());
+				cs.setInt(3, entity.getOrdernum());
+				cs.setString(4, entity.getFlag());
+				cs.setString(5, entity.getCvalue());
+				cs.registerOutParameter(6, Types.INTEGER);
+				return null;
+			}
+		}, new Object[] { entity }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				int affect = cs.getInt(6);
+				return affect;
+			}
+		}, null);
+		if (object == null) {
+			return -1;
+		} else {
+			return (int) object;
 		}
-		return -1;
 	}
 
 	public int update(Category entity) {
-		if (initExecuteProc("{call pack_category.updatedata(?,?,?,?,?)}")) {
-			setObject(1, entity.getId());
-			setObject(2, entity.getTitle());
-			setObject(3, entity.getParentid());
-			setObject(4, entity.getOrdernum());
-			registerOutParameter(5, Types.INTEGER);
-			executeProc();
-			int affect = (int) getObject(5);
-			release();
-			return affect;
+		Object object = executeProc("{call pack_category.updatedata(?,?,?,?,?,?)}", new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				Category entity = (Category) param[0];
+				cs.setInt(1, entity.getId());
+				cs.setString(2, entity.getTitle());
+				cs.setInt(3, entity.getParentid());
+				cs.setInt(4, entity.getOrdernum());
+				cs.setString(5, entity.getCvalue());
+				cs.registerOutParameter(6, Types.INTEGER);
+				return null;
+			}
+		}, new Object[] { entity }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				int affect = cs.getInt(6);
+				return affect;
+			}
+		}, null);
+		if (object == null) {
+			return -1;
+		} else {
+			return (int) object;
 		}
-		return -1;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Category> select() {
-		ResultSet rs = executeSql("select * from category where isdeleted = 0  order by sort desc", null);
-		List<Category> array = toList(rs);
-		release();
-		return array;
+		Object obj = executeSql("select * from category where isdeleted = 0  order by sort desc", null, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				return toList(rs);
+			}
+		});
+		return (List<Category>) obj;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Category> select(String flag) {
-		ResultSet rs = executeSql("select * from category where isdeleted = 0 and flag = ? order by sort desc", new Object[] { flag });
-		List<Category> array = toList(rs);
-		release();
-		return array;
+		Object obj = executeSql("select * from category where isdeleted = 0 and flag = ? order by sort desc", new Object[] { flag }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				return toList(rs);
+			}
+		});
+		return (List<Category>) obj;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Category selectById(int id) {
-		ResultSet rs = executeSql("select * from category where isdeleted = 0 and id = ?", new Object[] { id });
-		List<Category> array = toList(rs);
-		release();
+		Object obj = executeSql("select * from category where isdeleted = 0 and id = ?", new Object[] { id }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				return toList(rs);
+			}
+		});
+		List<Category> array = (List<Category>) obj;
 		if (array == null) {
 			return null;
 		}
@@ -65,15 +107,26 @@ public class CategoryContext extends DBContextBase {
 	}
 
 	public int delete(int id) {
-		if (initExecuteProc("{call pack_category.remove(?,?)}")) {
-			setObject(1, id);
-			registerOutParameter(2, Types.INTEGER);
-			executeProc();
-			int affect = (int) getObject(2);
-			release();
-			return affect;
+		Object object = executeProc("{call pack_category.remove(?,?)}", new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				int id = (int) param[0];
+				cs.setInt(1, id);
+				cs.registerOutParameter(2, Types.INTEGER);
+				return null;
+			}
+		}, new Object[] { id }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				int affect = cs.getInt(2);
+				return affect;
+			}
+		}, null);
+		if (object == null) {
+			return -1;
+		} else {
+			return (int) object;
 		}
-		return -1;
 	}
 
 	private List<Category> toList(ResultSet rs) {
@@ -92,6 +145,7 @@ public class CategoryContext extends DBContextBase {
 				temp.setGrade(rs.getInt("grade"));
 				temp.setSort(rs.getString("sort"));
 				temp.setFlag(rs.getString("flag"));
+				temp.setCvalue(rs.getString("cvalue"));
 				temp.setIsdeleted(rs.getBoolean("isdeleted"));
 				array.add(temp);
 			}

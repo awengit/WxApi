@@ -9,6 +9,7 @@ others									-10100
 微信模块：
 	officialaccount
 	wxgroup
+	wxuser
 登录模块：
 	loginuser(只处理表)
 公用模块：

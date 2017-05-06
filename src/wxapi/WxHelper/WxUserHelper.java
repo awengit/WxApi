@@ -3,6 +3,7 @@ package wxapi.WxHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import wxapi.Entity.View.Result2;
 import wxapi.Entity.Wx.AccessToken;
 import wxapi.Entity.Wx.WxResult;
 import wxapi.Entity.Wx.WxUser;
@@ -20,13 +21,13 @@ public class WxUserHelper extends WxHelperBase {
 	 * @param nextOpenid
 	 * @return
 	 */
-	public Object getWxUser(AccessToken accessToken, String nextOpenid) {
+	public Result2<WxUser> getWxUser(AccessToken accessToken, String nextOpenid) {
 		if (accessToken == null) {
 			return null;
 		}
 		String strUrl = "https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s";
 		strUrl = String.format(strUrl, accessToken.access_token, nextOpenid);
-		String strResult = createGet(accessToken.accountnum, strUrl, ModuleName, "getUser");
+		String strResult = createGet(strUrl, accessToken.accountnum, ModuleName, "getUser");
 		return initResult(strResult, WxUser.class);
 	}
 
@@ -47,15 +48,15 @@ public class WxUserHelper extends WxHelperBase {
 		String strResult = "";
 		List<WxUserInfo> userInfoArray = new ArrayList<WxUserInfo>();
 		StringBuilder sb = new StringBuilder();
-		Object obj;
+		Result2<WxUserInfoArray> result2;
 		for (int i = 0; i < openids.size(); i++) {
 			sb.append("{\"openid\": \"" + openids.get(i) + "\",  \"lang\": \"zh-CN\"},");
-			if ((i % 99) == 0 || i == (openids.size() - 1)) {
+			if (((i + 1) % 100) == 0 || i == (openids.size() - 1)) {
 				strTemp = "{\"user_list\": [" + sb.toString().substring(0, sb.length() - 1) + "]}";
-				strResult = createPost(strUrl, accessToken.accountnum, ModuleName, "getWxUserInfoArray", strTemp);
-				obj = initResult(strResult, WxUserInfoArray.class);
-				if (obj instanceof WxUserInfoArray) {
-					userInfoArray.addAll(((WxUserInfoArray) obj).getUser_info_list());
+				strResult = createPost(strUrl, strTemp, accessToken.accountnum, ModuleName, "getWxUserInfoArray");
+				result2 = initResult(strResult, WxUserInfoArray.class);
+				if (result2.getIssuccess()) {
+					userInfoArray.addAll(result2.getParam().getUser_info_list());
 				} else {
 					System.out.println(strResult);
 				}
@@ -74,16 +75,14 @@ public class WxUserHelper extends WxHelperBase {
 	 * @param remark
 	 * @return
 	 */
-	public WxResult updateWxUserRemark(AccessToken accessToken, String openid, String remark) {
-		WxResult wxResult = new WxResult();
+	public Result2<WxResult> updateWxUserRemark(AccessToken accessToken, String openid, String remark) {
 		if (accessToken == null || openid == null) {
-			wxResult.setErrmsg("accessToken或者openid 为空");
-			return wxResult;
+			return null;
 		}
 		String strUrl = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=%s";
 		strUrl = String.format(strUrl, accessToken.access_token);
 		String strJson = "{\"openid\":\"" + openid + "\",\"remark\":\"" + remark + "\"}";
 		String strResult = createPost(strUrl, strJson, accessToken.accountnum, ModuleName, "updateRemark");
-		return (WxResult) initResult(strResult, WxUser.class);
+		return initResult(strResult, WxResult.class);
 	}
 }

@@ -3,13 +3,19 @@ package wxapi.Controller;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.google.gson.Gson;
+
+import wxapi.Annotation.RightValidation;
+import wxapi.Annotation.RightValidationType;
 import wxapi.Entity.Category;
 import wxapi.Entity.CategoryFlag;
 import wxapi.Entity.View.Result;
@@ -19,6 +25,7 @@ import wxapi.Entity.View.ResultCode;
 @RequestMapping("/category/*")
 public class CategoryController extends ControllerBase {
 
+	@RightValidation(RightValidationType.NeedUrlRight)
 	@RequestMapping(value = "list")
 	public ModelAndView list(String flag) {
 		List<CategoryFlag> arrayFlag = categoryFlagService.select();

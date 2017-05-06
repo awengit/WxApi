@@ -1,11 +1,10 @@
 package wxapi.Entity.Base;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BeanBase {
 
-	public boolean validateIntRange(int value, int minValue) {
+	public static boolean validateIntRange(int value, int minValue) {
 		return value >= minValue;
 	}
 
@@ -13,16 +12,19 @@ public class BeanBase {
 		return value >= minValue && value <= maxValue;
 	}
 
-	public boolean validateUints(String value) {
-		if (value == null) {
+	public static boolean validateUints(String value, boolean canEmpty, int minLength, int maxLength) {
+		if (value == null || value.isEmpty()) {
 			return false;
 		}
 		Pattern pattern = Pattern.compile("^(,\\d+){0,},$");
-		Matcher matcher = pattern.matcher(value);
-		return matcher.matches();
+		if (!pattern.matcher(value).matches()) {
+			return false;
+		} else {
+			return validateStringRang(value, false, minLength, maxLength);
+		}
 	}
 
-	public boolean validateStringRang(String value, boolean canEmpty, int minLength, int maxLength) {
+	public static boolean validateStringRang(String value, boolean canEmpty, int minLength, int maxLength) {
 		if (value == null || value.isEmpty()) {
 			return canEmpty;
 		}
@@ -39,7 +41,7 @@ public class BeanBase {
 		return length >= minLength && length <= maxLength;
 	}
 
-	public boolean validateStringIsInt(String value, int minValue, int maxValue) {
+	public static boolean validateStringIsInt(String value, int minValue, int maxValue) {
 		if (value == null || value.isEmpty()) {
 			return false;
 		}
@@ -51,23 +53,42 @@ public class BeanBase {
 		}
 	}
 
-	public boolean validateStringIsLN(String value, boolean canEmpty, int minLength, int maxLength) {
+	public static boolean validateStringIsLN(String value, boolean canEmpty, int minLength, int maxLength) {
 		if (value == null || value.isEmpty()) {
 			return canEmpty;
 		}
-		String strRegex = "^[a-zA-Z0-9]{%d,%d}$";
-		strRegex = String.format(strRegex, minLength, maxLength);
+		String strRegex = "^[a-zA-Z0-9]+$";
 		Pattern pattern = Pattern.compile(strRegex);
-		return pattern.matcher(value).matches();
+		if (!pattern.matcher(value).matches()) {
+			return false;
+		} else {
+			return validateStringRang(value, false, minLength, maxLength);
+		}
 	}
-	
-	public boolean validateStringIsLNS(String value, boolean canEmpty, int minLength, int maxLength) {
+
+	public static boolean validateStringIsPassword(String value, boolean canEmpty, int minLength, int maxLength) {
 		if (value == null || value.isEmpty()) {
 			return canEmpty;
 		}
-		String strRegex = "^[a-zA-Z0-9!@#+_-]{%d,%d}$";
-		strRegex = String.format(strRegex, minLength, maxLength);
+		String strRegex = "^[a-zA-Z0-9!@#+_-]+$";
 		Pattern pattern = Pattern.compile(strRegex);
-		return pattern.matcher(value).matches();
+		if (!pattern.matcher(value).matches()) {
+			return false;
+		} else {
+			return validateStringRang(value, false, minLength, maxLength);
+		}
+	}
+
+	public static boolean validateStringIsPasswords(String value, boolean canEmpty, int minLength, int maxLength) {
+		if (value == null || value.isEmpty()) {
+			return canEmpty;
+		}
+		String strRegex = "^(,[a-zA-Z0-9!@#+_-]+){0,},$";
+		Pattern pattern = Pattern.compile(strRegex);
+		if (!pattern.matcher(value).matches()) {
+			return false;
+		} else {
+			return validateStringRang(value, false, minLength, maxLength);
+		}
 	}
 }

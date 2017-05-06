@@ -17,7 +17,7 @@
 	<!-- 完成请求和注解POJO的映射 -->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
-		
+
 	<!-- 设置使用注解的类所在的jar包 -->
 	<context:component-scan base-package="wxapi.Controller"></context:component-scan>
 
@@ -25,4 +25,11 @@
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
 		p:prefix="/WEB-INF/view/" p:suffix=".jsp" />
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="wxapi.Interceptor.RightValidInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
 </beans>

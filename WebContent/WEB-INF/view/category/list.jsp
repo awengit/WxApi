@@ -53,7 +53,7 @@
 					<button class="layui-btn btn-search" lay-submit="">查询</button>
 				</div>
 				<div class="layui-inline">
-					<a class="layui-btn layui-btn-primary" onclick="OpenWindowIframe('/category/modify.html','400px','350px')">添加类别</a>
+					<a class="layui-btn layui-btn-primary" onclick="OpenWindowIframe('/category/modify.html','500px','405px')">添加类别</a>
 				</div>
 			</div>
 			<table class="layui-table">
@@ -74,7 +74,7 @@
 						<tr>
 							<td><c:forEach begin="2" end="${a.grade}" step="1">--</c:forEach>${a.title}</td>
 							<td>${a.ordernum}</td>
-							<td style="text-align: center;"><a title="编辑" onclick="OpenWindowIframe('/category/modify.html?id=${a.id}','400px','300px')" class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a
+							<td style="text-align: center;"><a title="编辑" onclick="OpenWindowIframe('/category/modify.html?id=${a.id}','500px','355px')" class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a
 								title="删除" onclick="Delete('${a.id}')" class="layui-btn layui-btn-primary layui-btn-small">删除</a></td>
 						</tr>
 					</c:forEach>

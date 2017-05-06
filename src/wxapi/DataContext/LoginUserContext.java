@@ -1,11 +1,14 @@
 package wxapi.DataContext;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import wxapi.DataContext.Base.DBContextBase;
+import wxapi.DataContext.Base.ISQLOperate;
 import wxapi.Entity.LoginUser;
 
 public class LoginUserContext extends DBContextBase {
@@ -20,18 +23,27 @@ public class LoginUserContext extends DBContextBase {
 		return executeSqlNonQuery("update loginuser set rolecode=?,wxaccountcodes=? where loginname=upper(?) and isdeleted=0", params);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<LoginUser> select() {
-		ResultSet rs = executeSql("select * from loginuser where isdeleted=0", null);
-		List<LoginUser> array = toList(rs);
-		release();
-		return array;
+		Object obj = executeSql("select * from loginuser where isdeleted=0", null, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				return toList(rs);
+			}
+		});
+		return (List<LoginUser>) obj;
 	}
 
+	@SuppressWarnings("unchecked")
 	public LoginUser select(String loginname) {
-		ResultSet rs = executeSql("select * from loginuser where loginname=upper(?) and isdeleted=0", new Object[] { loginname });
-		List<LoginUser> array = toList(rs);
-		release();
-		if (array == null || array.size() == 0) {
+		Object obj = executeSql("select * from loginuser where loginname=upper(?) and isdeleted=0", new Object[] { loginname }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				return toList(rs);
+			}
+		});
+		List<LoginUser> array = (List<LoginUser>) obj;
+		if (array == null) {
 			return null;
 		}
 		return array.get(0);

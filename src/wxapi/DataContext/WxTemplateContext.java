@@ -1,25 +1,52 @@
 package wxapi.DataContext;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import wxapi.DataContext.Base.DBContextBase;
+import wxapi.DataContext.Base.ISQLOperate;
 import wxapi.Entity.Wx.WxTemplate;
 
 public class WxTemplateContext extends DBContextBase {
 
-	public int[] batchInsert(Object[][] params) {
-		int[] result = executeSqlByBatch("insert into wxtemplate(accountnum,templateid,templatetitle,primaryindustry,deputyindustry,templatecontent,templateexample)values(?,?,?,?,?,?,?)", params);
-		release();
-		return result;
+	public int batchInsert(List<WxTemplate> array) {
+		executeSqlByBatch("insert into wxtemplate(accountnum,templateid,templatetitle,primaryindustry,deputyindustry,templatecontent,templateexample)values(?,?,?,?,?,?,?)", new Object[] { array }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				@SuppressWarnings("unchecked")
+				List<WxTemplate> array = (List<WxTemplate>) param[0];
+				for (int i = 0; i < array.size(); i++) {
+					ps.setObject(1, array.get(i).getAccountnum());
+					ps.setObject(2, array.get(i).getTemplate_id());
+					ps.setObject(3, array.get(i).getTitle());
+					ps.setObject(4, array.get(i).getPrimary_industry());
+					ps.setObject(5, array.get(i).getDeputy_industry());
+					ps.setObject(6, array.get(i).getContent());
+					ps.setObject(7, array.get(i).getExample());
+					ps.addBatch();
+					if ((i + 1) % 100 == 0 || i == array.size() - 1) {
+						ps.executeBatch();
+					}
+				}
+				return null;
+			}
+		});
+		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<WxTemplate> SelectByAccountnum(String accountnum) {
-		ResultSet rs = executeSql("select * from wxtemplate where accountnum = ?", new Object[] { accountnum });
-		List<WxTemplate> array = toList(rs);
-		release();
-		return array;
+		Object obj = executeSql("select * from wxtemplate where accountnum = ?", new Object[] { accountnum }, new ISQLOperate() {
+			@Override
+			public Object operate(Object[] param, Connection conn, PreparedStatement ps, CallableStatement cs, ResultSet rs) throws SQLException {
+				return toList(rs);
+			}
+		});
+		return (List<WxTemplate>) obj;
 	}
 
 	private List<WxTemplate> toList(ResultSet rs) {

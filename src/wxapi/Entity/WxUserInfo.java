@@ -8,6 +8,8 @@ public class WxUserInfo extends wxapi.Entity.Wx.WxUserInfo {
 
 	private String accountname;
 
+	private String groupname;
+
 	public String getAccountcode() {
 		return accountcode;
 	}
@@ -32,4 +34,11 @@ public class WxUserInfo extends wxapi.Entity.Wx.WxUserInfo {
 		this.accountname = accountname;
 	}
 
+	public String getGroupname() {
+		return groupname;
+	}
+
+	public void setGroupname(String groupname) {
+		this.groupname = groupname;
+	}
 }

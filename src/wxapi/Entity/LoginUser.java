@@ -68,7 +68,7 @@ public class LoginUser extends BeanBase implements IValidate {
 			result.setMsg("用户名不能为空，且长度不能超过20个字符");
 			return result;
 		}
-		if (!isUpdate && !validateStringIsLNS(loginpsw, false, 1, 20)) {
+		if (!isUpdate && !validateStringIsPassword(loginpsw, false, 1, 20)) {
 			result.setMsg("用户密码不能为空，且长度不能超过20个字符");
 			return result;
 		}

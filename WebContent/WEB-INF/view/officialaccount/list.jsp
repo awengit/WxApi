@@ -12,7 +12,12 @@
 		window.location.reload(true);
 	}
 	function RefreshWxUser(accountcode) {
-
+		AjaxToServ({
+			accountcode : accountcode
+		}, 'POST', '/wxuser/refresh.html',null, null, function(data){
+			layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.msg('成功');});}, null);
 	}
 	function RefreshWxGroup(accountcode) {
 		AjaxToServ({
@@ -79,12 +84,10 @@
 							<td>${a.accountnum}</td>
 							<td>${a.appid}</td>
 							<td>${a.secret}</td>
-							<td style="text-align: center;">
-							<a title="刷新用户" onclick="RefreshWxUser'${a.accountcode}')" class="layui-btn layui-btn-primary layui-btn-small">刷新用户</a>
-							<a title="刷新分组" onclick="RefreshWxGroup('${a.accountcode}')" class="layui-btn layui-btn-primary layui-btn-small">刷新分组</a>
-							<a title="刷新模板" onclick="RefreshWxTemplate'${a.accountcode}')" class="layui-btn layui-btn-primary layui-btn-small">刷新模板</a> 
-							<a title="编辑"	onclick="OpenWindowIframe('/officialaccount/modify.html?accountcode=${a.accountcode}','600px','350px')" class="layui-btn layui-btn-primary layui-btn-small">编辑</a> 
-							<a title="删除"	onclick="Delete('${a.accountcode}')" class="layui-btn layui-btn-primary layui-btn-small">删除</a></td>
+							<td style="text-align: center;"><a title="刷新用户" onclick="RefreshWxUser('${a.accountcode}')" class="layui-btn layui-btn-primary layui-btn-small">刷新用户</a> <a title="刷新分组"
+								onclick="RefreshWxGroup('${a.accountcode}')" class="layui-btn layui-btn-primary layui-btn-small">刷新分组</a> <a title="刷新模板" onclick="RefreshWxTemplate'${a.accountcode}')"
+								class="layui-btn layui-btn-primary layui-btn-small">刷新模板</a> <a title="编辑" onclick="OpenWindowIframe('/officialaccount/modify.html?accountcode=${a.accountcode}','600px','350px')"
+								class="layui-btn layui-btn-primary layui-btn-small">编辑</a> <a title="删除" onclick="Delete('${a.accountcode}')" class="layui-btn layui-btn-primary layui-btn-small">删除</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

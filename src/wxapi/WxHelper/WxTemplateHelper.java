@@ -1,5 +1,6 @@
 package wxapi.WxHelper;
 
+import wxapi.Entity.View.Result2;
 import wxapi.Entity.Wx.AccessToken;
 import wxapi.Entity.Wx.WxTemplateArray;
 
@@ -7,7 +8,7 @@ public class WxTemplateHelper extends WxHelperBase {
 
 	private static String ModuleName = "WxTemplate";
 
-	public Object getTemplate(AccessToken accessToken) {
+	public Result2<WxTemplateArray> getTemplate(AccessToken accessToken) {
 		if (accessToken == null) {
 			return null;
 		}

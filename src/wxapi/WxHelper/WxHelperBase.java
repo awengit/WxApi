@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import wxapi.Entity.View.Result2;
+import wxapi.Entity.View.ResultCode;
 import wxapi.Entity.Wx.AccessToken;
 import wxapi.Entity.Wx.WxResult;
+
 import com.google.gson.Gson;
+
 import avin.web.HttpRequest;
 
 public class WxHelperBase {
@@ -36,7 +41,7 @@ public class WxHelperBase {
 		return result;
 	}
 
-	public static Object getAccessToken(String accountnum, String appid, String secret) {
+	public static AccessToken getAccessToken(String accountnum, String appid, String secret) {
 		AccessToken token;
 		for (int i = 0; i < arrayToken.size(); i++) {
 			if (arrayToken.get(i).accountnum.equals(accountnum)) {
@@ -53,38 +58,51 @@ public class WxHelperBase {
 		String strUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 		strUrl = String.format(strUrl, appid, secret);
 		String strResult = createGet(strUrl, accountnum, "GetAccessToken", "");
-		Object obj = initResult(strResult, AccessToken.class);
-		if (obj instanceof AccessToken) {
-			if (obj != null) {
-				token = (AccessToken) obj;
-				token.accountnum = accountnum;
-				token.appid = appid;
-				token.secret = secret;
-				Date dateNow = new Date();
-				token.get_time = dateNow.getTime();
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(dateNow);
-				cal.set(Calendar.SECOND, token.expires_in - 10);
-				token.expire_time = cal.getTime().getTime();
-				addToken(token);
-			}
-			return obj;
+		Result2<AccessToken> result2 = initResult(strResult, AccessToken.class);
+		if (result2.getIssuccess()) {
+			token = result2.getParam();
+			token.accountnum = accountnum;
+			token.appid = appid;
+			token.secret = secret;
+			Date dateNow = new Date();
+			token.get_time = dateNow.getTime();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(dateNow);
+			cal.set(Calendar.SECOND, token.expires_in - 10);
+			token.expire_time = cal.getTime().getTime();
+			addToken(token);
+			return token;
 		}
 		return null;
 	}
 
-	protected static Object initResult(String result, Class<?> clazz) {
+	protected static <T> Result2<T> initResult(String result, Class<T> clazz) {
+		Result2<T> result2 = new Result2<T>();
+		result2.setIssuccess(false);
 		if (result == null || result.isEmpty()) {
-			return null;
+			result2.setCode(ResultCode.Null.ordinal());
+			result2.setMsg("response is null");
+			return result2;
 		}
 		Gson gson = new Gson();
-		Object obj;
 		if (result.startsWith("{\"errcode\":")) {
-			obj = gson.fromJson(result, WxResult.class);
+			WxResult wxResult = gson.fromJson(result, WxResult.class);
+			if (wxResult.getErrcode() == 0) {
+				result2.setIssuccess(true);
+			}
+			result2.setCode(wxResult.getErrcode());
+			result2.setMsg(wxResult.getErrmsg());
 		} else {
-			obj = gson.fromJson(result, clazz);
+			T t = gson.fromJson(result, clazz);
+			if (t == null) {
+				result2.setCode(ResultCode.Null.ordinal());
+				result2.setMsg("t is null");
+			} else {
+				result2.setIssuccess(true);
+				result2.setParam(t);
+			}
 		}
-		return obj;
+		return result2;
 	}
 
 	private static void addToken(AccessToken token) {

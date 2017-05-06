@@ -26,6 +26,11 @@
 				if (!validater.validateIntRange(value, 1, 99999)) {
 					return '排序不能为空，只能为正整数，并且长度在1到99999之间';
 				}
+			},
+			cvalue : function(value) {
+				if (!validater.validateStringRang(value, true, 1, 100)) {
+					return '类别值长度在1到100之间';
+				}
 			}
 		});
 		layform.on('select(flag)', function(data) {
@@ -45,11 +50,13 @@
 			return;
 		}
 		$('.parentid').html('<option value="0">一级类别</option>');
-		for (var i = 0; i < categoryJson.length; i++) {
-			if (categoryJson[i].flag == flag) {
-				$('.parentid').append(
-						'<option ' + (parentid == categoryJson[i].id ? "selected" : "") + '  value="' + categoryJson[i].id + '">' + CreateGradeStr(categoryJson[i].grade) + categoryJson[i].title
-								+ '</option>');
+		if (categoryJson != null) {
+			for (var i = 0; i < categoryJson.length; i++) {
+				if (categoryJson[i].flag == flag) {
+					$('.parentid').append(
+							'<option ' + (parentid == categoryJson[i].id ? "selected" : "") + '  value="' + categoryJson[i].id + '">' + CreateGradeStr(categoryJson[i].grade) + categoryJson[i].title
+									+ '</option>');
+				}
 			}
 		}
 		layform.render('select');
@@ -102,6 +109,12 @@
 					<label class="layui-form-label">排序</label>
 					<div class="layui-input-block">
 						<input name="ordernum" lay-verify="required|ordernum" placeholder="排序" autocomplete="off" class="layui-input" type="text" maxlength="5" value="${model.ordernum}">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">类别值</label>
+					<div class="layui-input-block">
+						<input name="cvalue" lay-verify="cvalue" placeholder="类别值" autocomplete="off" class="layui-input" type="text" maxlength="100" value="${model.cvalue}">
 					</div>
 				</div>
 				<div class="layui-form-item">

@@ -34,7 +34,12 @@ public enum ResultCode {
 	/*
 	 * 无效
 	 */
-	UnValidate(6);
+	UnValidate(6),
+
+	/**
+	 * Null
+	 */
+	Null(7);
 
 	private int value = 0;
 
@@ -62,6 +67,8 @@ public enum ResultCode {
 			return NotExist;
 		case 6:
 			return UnValidate;
+		case 7:
+			return Null;
 		default:
 			return null;
 		}
