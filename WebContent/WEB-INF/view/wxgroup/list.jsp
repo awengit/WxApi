@@ -58,7 +58,7 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<a class="layui-btn layui-btn-primary" onclick="OpenWindowIframe('/wxgroup/modify.html?accountcode=${accountcode}','400px','250px')">添加</a>
+				<a class="layui-btn layui-btn-primary" onclick="OpenWindowIframe('/wxgroup/modify.html?accountcode=${accountcode}','400px','190px')">添加</a>
 			</div>
 			<table class="layui-table">
 				<colgroup>

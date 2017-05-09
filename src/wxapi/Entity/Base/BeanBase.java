@@ -66,6 +66,19 @@ public class BeanBase {
 		}
 	}
 
+	public static boolean validateStringIsLNs(String value, boolean canEmpty, int minLength, int maxLength) {
+		if (value == null || value.isEmpty()) {
+			return canEmpty;
+		}
+		String strRegex = "^(,[a-zA-Z0-9]+){0,},$";
+		Pattern pattern = Pattern.compile(strRegex);
+		if (!pattern.matcher(value).matches()) {
+			return false;
+		} else {
+			return validateStringRang(value, false, minLength, maxLength);
+		}
+	}
+
 	public static boolean validateStringIsPassword(String value, boolean canEmpty, int minLength, int maxLength) {
 		if (value == null || value.isEmpty()) {
 			return canEmpty;

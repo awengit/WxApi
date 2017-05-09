@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.PARAMETER, ElementType.FIELD })
 public @interface SessionData {
 
-	String value() default "";
+	String value() default "loginuserinfo";
 
 }

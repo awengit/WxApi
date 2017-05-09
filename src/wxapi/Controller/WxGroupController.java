@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import wxapi.Annotation.RightValidation;
+import wxapi.Annotation.RightValidationType;
 import wxapi.Entity.WxGroup;
 import wxapi.Entity.Base.BeanBase;
 import wxapi.Entity.View.Result;
@@ -24,6 +26,7 @@ import wxapi.Entity.Wx.WxGroupForCreate;
 import wxapi.Entity.Wx.WxResult;
 import wxapi.WxHelper.WxGroupHelper;
 
+@RightValidation(RightValidationType.NeedWxRight)
 @Controller
 @RequestMapping("/wxgroup/*")
 public class WxGroupController extends ControllerBase {
@@ -38,7 +41,7 @@ public class WxGroupController extends ControllerBase {
 			groups = wxGroupService.selectByAccountcode(accountcode);
 		}
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("account", getLoginUserInfo().wxaccount);
+		mv.addObject("account", getCurUserInfo().wxaccount);
 		mv.addObject("accountcode", accountcode);
 		mv.addObject("groups", groups);
 		mv.setViewName("wxgroup/list");

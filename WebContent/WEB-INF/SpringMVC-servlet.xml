@@ -12,7 +12,11 @@
        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
 	<!-- 使用默认的注解映射 -->
-	<mvc:annotation-driven />
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			<bean class="wxapi.Resolver.SessionMethodArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
 
 	<!-- 完成请求和注解POJO的映射 -->
 	<bean

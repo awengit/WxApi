@@ -4,6 +4,7 @@ import java.util.List;
 
 import wxapi.DataService.CategoryFlagService;
 import wxapi.DataService.CategoryService;
+import wxapi.DataService.LoginUserService;
 import wxapi.DataService.OfficialAccountService;
 import wxapi.DataService.UserRightService;
 import wxapi.DataService.WxGroupService;
@@ -27,15 +28,22 @@ public class ControllerBase {
 
 	protected static WxUserService wxUserService = new WxUserService();
 
+	protected static LoginUserService loginUserService = new LoginUserService();
+
 	protected static UserRightService rightService = new UserRightService();
 
-	/**
-	 * 获取当前登录用户信息
-	 * 
-	 * @return
-	 */
-	public static LoginUserInfo getLoginUserInfo() {
-		return null;
+	private static ThreadLocal<LoginUserInfo> userThreadLocal = new ThreadLocal<LoginUserInfo>();
+
+	public static void SetCurUserInfo(LoginUserInfo userInfo) {
+		userThreadLocal.set(userInfo);
+	}
+
+	public static LoginUserInfo getCurUserInfo() {
+		return userThreadLocal.get();
+	}
+
+	public static void removeCurUserInfo() {
+		userThreadLocal.remove();
 	}
 
 	/**
@@ -45,7 +53,7 @@ public class ControllerBase {
 	 * @return
 	 */
 	public static String getValidWxAccountCode(String accountcode) {
-		List<OfficialAccount> accounts = getLoginUserInfo().wxaccount;
+		List<OfficialAccount> accounts = getCurUserInfo().wxaccount;
 		if (accounts == null || accounts.size() == 0) {
 			return null;
 		}
@@ -67,7 +75,7 @@ public class ControllerBase {
 	 * @return
 	 */
 	public static String getValidWxAccountNum(String accountcode) {
-		List<OfficialAccount> accounts = getLoginUserInfo().wxaccount;
+		List<OfficialAccount> accounts = getCurUserInfo().wxaccount;
 		if (accounts == null || accounts.size() == 0) {
 			return null;
 		}
@@ -89,7 +97,7 @@ public class ControllerBase {
 	 * @return
 	 */
 	public static OfficialAccount getValidWxAccount(String accountcode) {
-		List<OfficialAccount> accounts = getLoginUserInfo().wxaccount;
+		List<OfficialAccount> accounts = getCurUserInfo().wxaccount;
 		if (accounts == null || accounts.size() == 0) {
 			return null;
 		}

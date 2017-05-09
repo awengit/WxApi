@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import wxapi.Annotation.RightValidation;
+import wxapi.Annotation.RightValidationType;
 import wxapi.Entity.DataContainer;
 import wxapi.Entity.OfficialAccount;
 import wxapi.Entity.WxGroup;
@@ -25,6 +27,7 @@ import wxapi.Entity.Wx.WxUser;
 import wxapi.Entity.Wx.WxUserInfo;
 import wxapi.WxHelper.WxUserHelper;
 
+@RightValidation(RightValidationType.NeedWxRight)
 @Controller
 @RequestMapping("/wxuser/*")
 public class WxUserController extends ControllerBase {
@@ -48,7 +51,7 @@ public class WxUserController extends ControllerBase {
 		mv.addObject("where", where);
 		mv.addObject("wxuser", dc.data);
 		mv.addObject("group", groups);
-		mv.addObject("account", getLoginUserInfo().wxaccount);
+		mv.addObject("account", getCurUserInfo().wxaccount);
 		return mv;
 	}
 

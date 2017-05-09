@@ -5,8 +5,22 @@
 <title>登录</title>
 <%@include file="/WEB-INF/view/script.jsp"%>
 <script type="text/javascript">
-	PostDataToServ('postData', 'POST', '/manage/LoginEx.html',
-			'/manage/Index.html', null, null, null);
+	layui.use('form', function() {
+		var layform = layui.form();
+		layform.verify({
+			loginname : function(value) {
+				if (!validater.validateStringIsPassword(value, false, 1, 20)) {
+					return '用户名不能为空，并且字符长度在1到20之间';
+				}
+			},
+			loginpsw : function(value) {
+				if (!validater.validateStringIsPassword(value, false, 1, 20)) {
+					return '用户密码不能为空，并且字符长度在1到20之间';
+				}
+			}
+		});
+	});
+	PostDataToServ('postData', 'POST', '/manage/login.html', '/manage/index.html', null, null, null);
 </script>
 </head>
 <body>
@@ -18,22 +32,13 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">用户名</label>
 						<div class="layui-input-inline">
-							<input name="LoginName" lay-verify="required" placeholder="请输入用户名" autocomplete="off"
-								class="layui-input" type="text">
+							<input name="loginname" lay-verify="required|loginname" placeholder="请输入用户名" autocomplete="off" class="layui-input" type="text" maxlength="20">
 						</div>
 					</div>
 					<div class="layui-form-item">
 						<label class="layui-form-label">用户密码</label>
 						<div class="layui-input-inline">
-							<input name="LoginPsw" lay-verify="required" placeholder="请输入用户密码" autocomplete="off"
-								class="layui-input" type="password">
-						</div>
-					</div>
-					<div class="layui-form-item">
-						<label class="layui-form-label">验证码</label>
-						<div class="layui-input-inline">
-							<input name="checkcode" lay-verify="" placeholder="请输入验证码" autocomplete="off"
-								class="layui-input" type="text">
+							<input name="loginpsw" lay-verify="required|loginpsw" placeholder="请输入用户密码" autocomplete="off" class="layui-input" type="password" maxlength="20">
 						</div>
 					</div>
 					<div class="layui-form-item">

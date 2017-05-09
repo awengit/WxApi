@@ -21,11 +21,11 @@ import wxapi.Entity.CategoryFlag;
 import wxapi.Entity.View.Result;
 import wxapi.Entity.View.ResultCode;
 
+@RightValidation(RightValidationType.NeedUrlRight)
 @Controller
 @RequestMapping("/category/*")
 public class CategoryController extends ControllerBase {
 
-	@RightValidation(RightValidationType.NeedUrlRight)
 	@RequestMapping(value = "list")
 	public ModelAndView list(String flag) {
 		List<CategoryFlag> arrayFlag = categoryFlagService.select();
@@ -126,5 +126,4 @@ public class CategoryController extends ControllerBase {
 		}
 		response.getWriter().print(result.toJson());
 	}
-
 }

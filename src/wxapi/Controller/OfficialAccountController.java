@@ -2,16 +2,22 @@ package wxapi.Controller;
 
 import java.io.IOException;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import wxapi.Annotation.RightValidation;
+import wxapi.Annotation.RightValidationType;
 import wxapi.Entity.OfficialAccount;
 import wxapi.Entity.View.Result;
 import wxapi.Entity.View.ResultCode;
 
+@RightValidation(RightValidationType.NeedWxRight)
 @Controller
 @RequestMapping("/officialaccount/*")
 public class OfficialAccountController extends ControllerBase {

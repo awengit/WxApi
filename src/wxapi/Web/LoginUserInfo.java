@@ -1,9 +1,8 @@
 package wxapi.Web;
 
 import java.util.List;
-
-import wxapi.Entity.LoginUser;
 import wxapi.Entity.OfficialAccount;
+import wxapi.Entity.View.LoginUser;
 import wxapi.Entity.View.UserRight;
 
 public class LoginUserInfo {

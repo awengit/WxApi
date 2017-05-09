@@ -76,6 +76,11 @@ public class LoginUser extends BeanBase implements IValidate {
 			result.setMsg("角色不能为空");
 			return result;
 		}
+		if (!validateStringIsLNs(wxaccountcodes, false, 1, 50)) {
+			System.out.println(wxaccountcodes);
+			result.setMsg("微信公众号不能为空，且长度不能超过50个字符");
+			return result;
+		}
 		result.setIssuccess(true);
 		result.setCode(ResultCode.Success.ordinal());
 		return result;

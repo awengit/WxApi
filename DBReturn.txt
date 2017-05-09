@@ -11,7 +11,11 @@ others									-10100
 	wxgroup
 	wxuser
 登录模块：
-	loginuser(只处理表)
+	loginuser
+权限模块：
+	userright
+	userrole
+	权限控制
 公用模块：
 	category
 	categoryflag

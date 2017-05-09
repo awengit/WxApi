@@ -9,6 +9,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import wxapi.Annotation.RightValidation;
+import wxapi.Annotation.RightValidationType;
+import wxapi.Controller.ControllerBase;
 import wxapi.Web.LoginUserInfo;
 
 public class RightValidInterceptor extends HandlerInterceptorAdapter {
@@ -28,23 +30,34 @@ public class RightValidInterceptor extends HandlerInterceptorAdapter {
 				} else if (isClazzAnnotation) {
 					valid = clazz.getAnnotation(RightValidation.class);
 				}
-				// int type = valid == null ? RightValidType.NeedUrlRight :
-				// valid.value();
-				// if (type == RightValidType.NotNeed) {
-				// return true;
-				// }
-				// LoginUserInfo info = null;
-				// if (info == null) {
-				// response.sendRedirect("/manage/login.html");
-				// return false;
-				// }
-				// if (type == RightValidType.NeedLogin || type ==
-				// RightValidType.NeedUrlRight || type ==
-				// RightValidType.NeedWxRight) {
-				// return true;
-				// }
-				// String url = request.getRequestURI().toLowerCase();
-				// System.out.println(url);
+				int type = valid == null ? RightValidationType.NeedUrlRight : valid.value();
+				if (type == RightValidationType.NotNeed) {
+					return true;
+				}
+				LoginUserInfo userInfo = (LoginUserInfo) request.getSession().getAttribute("loginuserinfo");
+				if (userInfo == null) {
+					response.sendRedirect("/manage/login.html");
+					return false;
+				}
+				ControllerBase.SetCurUserInfo(userInfo);
+				if (type == RightValidationType.NeedLogin) {
+					return true;
+				}
+				String url = request.getRequestURI().toLowerCase();
+				boolean haveRight = false;
+				for (wxapi.Entity.View.UserRight right : userInfo.userRight) {
+					if (url.equals(right.getUrl())) {
+						haveRight = true;
+						break;
+					}
+				}
+				if (!haveRight) {
+					return false;
+				}
+				if (type == RightValidationType.NeedUrlRight) {
+					return true;
+				}
+				return true;
 			}
 		}
 		return true;
